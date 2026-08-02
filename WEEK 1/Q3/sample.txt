@@ -1,0 +1,71 @@
+==============================================================
+ Q3 - Performance Analysis of Bubble Sort
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+12
+
+(a single integer: the number of elements, maximum 25.
+ The array itself is generated randomly by the program.)
+
+--------------------------------------------------------------
+SAMPLE OUTPUT
+--------------------------------------------------------------
+===== Bubble Sort Performance Analysis =====
+Enter number of elements (max 25): 12
+
+Random Array:
+57 6 75 6 49 1 48 53 96 93 26 67
+
+Comparisons (Early Termination) : 60
+Comparisons (Full Pass)         : 66
+
+CSV file 'bubble_sort_analysis.csv' created successfully.
+Open it in Excel, LibreOffice or Google Sheets and insert a Line Chart.
+
+Comparison Graph
+------------------------------
+Early Termination : ############ (60)
+Full Pass         : ############## (66)
+
+Time Complexity:
+Early Termination : Best O(n), Worst O(n^2)
+Full Pass         : O(n^2)
+Space Complexity  : O(1)
+
+Conclusion:
+The early termination version performs fewer comparisons
+when the array becomes sorted before all passes.
+The full-pass version always performs all passes,
+making it less efficient.
+
+--------------------------------------------------------------
+NOTES
+--------------------------------------------------------------
+* The full-pass count depends only on n:
+      n(n-1)/2 = 12 * 11 / 2 = 66
+  It is identical for every input of size 12.
+* The early-termination count depends on the data.  This run
+  used 60: the array was sorted after 7 passes, so pass 8 made
+  no swaps and the loop broke, skipping passes 9-11 and the 6
+  comparisons they would have cost.  The committed CSV records
+  a different run at 63, which broke one pass later and saved
+  only 3.  Both are measured against the same baseline of 66.
+* Both versions sort COPIES of one array, so the counts are
+  measured on identical data.
+* The saving is a constant factor, not a better complexity
+  class.  On reverse-sorted input every pass swaps at least
+  once, the swap flag is never clean, and both versions perform
+  the same n(n-1)/2 comparisons.
+* The array is generated with a time-seeded rand(), so values
+  differ on every run.
+* The graph in the real output draws the two bars with different
+  characters: '#' for Early Termination and a solid block for
+  Full Pass.  Both are shown as '#' above for plain-text
+  portability.
+* The program writes bubble_sort_analysis.csv into the current
+  working directory.  Run it from a scratch directory if you do
+  not want the committed copy overwritten.

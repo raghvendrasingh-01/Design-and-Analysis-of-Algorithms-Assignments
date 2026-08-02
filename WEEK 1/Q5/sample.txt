@@ -1,0 +1,77 @@
+==============================================================
+ Q5 - Find the Partition Point
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+10
+0 0 0 0 0 1 1 1 1 1
+
+(first line: n, the number of elements
+ second line: n values, all 0s followed by all 1s)
+
+--------------------------------------------------------------
+SAMPLE OUTPUT
+--------------------------------------------------------------
+===== Partition Point Finder =====
+Enter number of elements: 10
+Enter 10 elements (0s followed by 1s):
+Array: 0 0 0 0 0 1 1 1 1 1
+
+Partition Point = 5
+Transition occurs between index 4 and 5.
+0 -> 1 transition found successfully.
+
+Time Complexity  : O(log n)
+Space Complexity : O(1)
+
+Conclusion:
+Binary Search efficiently finds the first occurrence of 1,
+which is the partition point between 0s and 1s.
+
+--------------------------------------------------------------
+TRACE OF THE BINARY SEARCH
+--------------------------------------------------------------
+Iter  low  high  mid  A[mid]  Action                    ans
+  1     0     9    4    0     go right, low = 5          -1
+  2     5     9    7    1     record, go left, high = 6   7
+  3     5     6    5    1     record, go left, high = 4   5
+  -     5     4    -    -     low > high, loop ends       5
+
+3 element comparisons, against up to 10 for a linear scan.
+Iteration 2 finds a 1 at index 7 but keeps searching left, which
+is what makes the answer the FIRST 1 rather than an arbitrary one.
+
+--------------------------------------------------------------
+ADDITIONAL TEST CASES
+--------------------------------------------------------------
+Input:   4
+         0 0 0 0
+Output:  No transition found.
+         The array contains only 0s.
+
+Input:   4
+         1 1 1 1
+Output:  Transition at index 0.
+         The array contains only 1s.
+
+Input:   2
+         0 1
+Output:  Partition Point = 1
+         Transition occurs between index 0 and 1.
+         0 -> 1 transition found successfully.
+
+(Only the lines that differ are shown.  The complexity lines and
+ the conclusion block are identical to the sample output above.)
+
+--------------------------------------------------------------
+NOTES
+--------------------------------------------------------------
+* Output is fully deterministic - no randomness involved.
+* The array must be 0s followed by 1s.  Binary search relies on
+  that ordering and gives no meaningful answer otherwise.
+* n is not validated against MAX = 100; keep it in 1..100.
+* Run non-interactively with:
+      printf '10\n0 0 0 0 0 1 1 1 1 1\n' | ./q5

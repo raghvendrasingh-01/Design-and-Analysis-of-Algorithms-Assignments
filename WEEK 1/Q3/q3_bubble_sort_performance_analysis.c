@@ -85,7 +85,7 @@ void createCSV(int n)
     fprintf(fp,"Full Pass,%d\n",comparisons2);
 
     fclose(fp);
-    printf("\nCSV file 'toh.csv' created successfully.\nOpen it in Excel, LibreOffice or Google Sheets and insert a Line Chart.\n");
+    printf("\nCSV file 'bubble_sort_analysis.csv' created successfully.\nOpen it in Excel, LibreOffice or Google Sheets and insert a Line Chart.\n");
 }
 
 void printGraph()

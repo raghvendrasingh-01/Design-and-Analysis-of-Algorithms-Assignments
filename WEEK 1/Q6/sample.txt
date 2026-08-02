@@ -1,0 +1,69 @@
+==============================================================
+ Q6 - Element Uniqueness
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+6
+10 25 3 47 8 19
+
+(first line: n, the number of elements
+ second line: n integers)
+
+--------------------------------------------------------------
+SAMPLE OUTPUT
+--------------------------------------------------------------
+===== Element Uniqueness Check =====
+Enter number of elements: 6
+Enter 6 numbers:
+
+Array: 10 25 3 47 8 19
+
+All elements are unique.
+
+Time Complexity  : O(n^2)
+Space Complexity : O(1)
+
+Conclusion:
+This method compares every pair of elements.
+For sufficiently large values of n, it becomes slow because
+the number of comparisons grows quadratically.
+More efficient methods such as sorting or hashing can be used
+for large datasets.
+
+--------------------------------------------------------------
+ADDITIONAL TEST CASES
+--------------------------------------------------------------
+Input:   6
+         10 25 3 10 8 19
+Output:  Array: 10 25 3 10 8 19
+         Duplicate elements are present.
+
+(Only the lines that differ are shown.  The complexity lines and
+ the conclusion block are identical to the sample output above.)
+
+--------------------------------------------------------------
+NOTES
+--------------------------------------------------------------
+* Output is fully deterministic - no randomness involved.
+* All-unique input is the WORST case: proving that no duplicate
+  exists requires every pair to be examined, which is
+  n(n-1)/2 = 6 * 5 / 2 = 15 comparisons for n = 6.
+* The duplicate case is cheaper.  Value 10 sits at index 0 and
+  index 3, so the scan returns on the 3rd comparison and skips
+  the remaining 12.
+* Growth of the worst-case comparison count:
+      n = 10       ->            45
+      n = 100      ->         4,950
+      n = 1,000    ->       499,500
+      n = 10,000   ->    49,995,000
+      n = 100,000  -> ~5,000,000,000
+  Each 10x increase in n multiplies the work by about 100x.
+* Faster alternatives:
+      sort then scan adjacent pairs : O(n log n)
+      hash set                      : O(n) average, O(n) space
+* n is not validated against MAX = 100; keep it in 1..100.
+* Run non-interactively with:
+      printf '6\n10 25 3 47 8 19\n' | ./q6

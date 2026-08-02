@@ -1,0 +1,104 @@
+==============================================================
+ Q4 - Towers of Hanoi
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+(none - the program reads no input and sweeps n = 1 .. 25)
+
+--------------------------------------------------------------
+SAMPLE OUTPUT (abridged; fully deterministic)
+--------------------------------------------------------------
+===== Tower of Hanoi =====
+
+===== 3 DISKS =====
+Move disk 1 from A to C
+Move disk 2 from A to B
+Move disk 1 from C to B
+Move disk 3 from A to C
+Move disk 1 from B to A
+Move disk 2 from B to C
+Move disk 1 from A to C
+Total Moves = 7
+
+===== 4 DISKS =====
+Move disk 1 from A to B
+Move disk 2 from A to C
+Move disk 1 from B to C
+Move disk 3 from A to B
+Move disk 1 from C to A
+Move disk 2 from C to B
+Move disk 1 from A to B
+Move disk 4 from A to C
+Move disk 1 from B to C
+Move disk 2 from B to A
+Move disk 1 from C to A
+Move disk 3 from B to C
+Move disk 1 from A to B
+Move disk 2 from A to C
+Move disk 1 from B to C
+Total Moves = 15
+
+---------------------------------------------
+Disks   Simulated       Formula
+---------------------------------------------
+ 1               1               1
+ 2               3               3
+ 3               7               7
+ 4              15              15
+ 5              31              31
+ 6              63              63
+ 7             127             127
+ 8             255             255
+ 9             511             511
+10            1023            1023
+11            2047            2047
+12            4095            4095
+13            8191            8191
+14           16383           16383
+15           32767           32767
+16           65535           65535
+17          131071          131071
+18          262143          262143
+19          524287          524287
+20         1048575         1048575
+21         2097151         2097151
+22         4194303         4194303
+23         8388607         8388607
+24        16777215        16777215
+25        33554431        33554431
+
+CSV file 'toh.csv' created successfully.
+Open it in Excel, LibreOffice or Google Sheets and insert a Line Chart.
+
+=========== LOG SCALE ASCII GRAPH ===========
+Disks   Moves         Graph
+--------------------------------------------------------
+ 1            1   #
+ 2            3   ##
+ 3            7   ###
+ 4           15   ####
+ 5           31   #####
+ ...
+25     33554431   #########################
+
+Time Complexity  : O(2^n)
+Space Complexity : O(n)
+
+--------------------------------------------------------------
+NOTES
+--------------------------------------------------------------
+* The Simulated and Formula columns match for all 25 rows.
+  T(n) = 2*T(n-1) + 1, T(0) = 0  solves to  T(n) = 2^n - 1.
+* Each extra disc doubles the work: 3 discs need 7 moves,
+  4 need 15, and 25 need 33,554,431.
+* The exponential cost is a lower bound of the problem, not a
+  weakness of this implementation: producing 2^n - 1 moves takes
+  at least 2^n - 1 steps.
+* The real ASCII graph uses a solid block character; '#' is
+  substituted here for plain-text portability.
+* The program writes toh.csv into the current working directory.
+  Run it from a scratch directory if you do not want the
+  committed copy overwritten.

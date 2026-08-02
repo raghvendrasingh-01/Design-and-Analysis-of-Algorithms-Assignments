@@ -1,0 +1,84 @@
+==============================================================
+ Q2 - Fair vs Biased Coin
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+100000
+
+(a single integer: the number of tosses per coin)
+
+--------------------------------------------------------------
+SAMPLE OUTPUT
+--------------------------------------------------------------
+=============================================
+      FAIR vs BIASED COIN TOSS SIMULATION
+=============================================
+
+Enter number of tosses for comparison: 100000
+
+========== FAIR COIN CONVERGENCE ==========
+---------------------------------------------------------------
+Tosses          Heads   Tails   Fraction        Error
+---------------------------------------------------------------
+      10            5       5   0.500000        0.000000
+     100           46      54   0.460000        0.040000
+    1000          529     471   0.529000        0.029000
+   10000         4886    5114   0.488600        0.011400
+  100000        50058   49942   0.500580        0.000580
+ 1000000       500558  499442   0.500558        0.000558
+
+Observation:
+As the number of tosses increases, the observed probability
+approaches 0.5 (Law of Large Numbers).
+
+========== FAIR vs BIASED COINS ==========
+(100000 tosses each)
+
+--------------------------------------------------------------------------
+Bias    Heads           Tails           Observed        Expected        Difference
+--------------------------------------------------------------------------
+50%        50109           49891        0.50109         0.50000         0.00109
+60%        59783           40217        0.59783         0.60000         0.00217
+70%        69961           30039        0.69961         0.70000         0.00039
+90%        89910           10090        0.89910         0.90000         0.00090
+30%        29751           70249        0.29751         0.30000         0.00249
+
+CSV file 'coin_toss_analysis.csv' created successfully.
+Open it in Excel, LibreOffice or Google Sheets and insert a Bar Graph.
+
+========== ASCII GRAPH ==========
+Observed Head Probability
+
+50% (0.50109) | #########################
+60% (0.59783) | ##############################
+70% (0.69961) | ###################################
+90% (0.89910) | #############################################
+30% (0.29751) | ###############
+
+============== CONCLUSION ==============
+1. A fair coin converges towards probability 0.5.
+2. A biased coin converges towards its own probability.
+3. Increasing the number of tosses reduces random error.
+4. This demonstrates the Law of Large Numbers.
+
+Time Complexity  : O(n)
+Space Complexity : O(1)
+
+--------------------------------------------------------------
+NOTES
+--------------------------------------------------------------
+* rand() is seeded with time(NULL), so exact counts differ on
+  every run.  What reproduces is the convergence, not the digits.
+* The error shrinks roughly as 1/sqrt(n): one extra decade of
+  tosses buys only about HALF a correct digit, and gaining a
+  full digit takes 100x the samples.  Monte Carlo convergence
+  is slow.
+* Each biased coin converges to its OWN probability, not to 0.5.
+* The real ASCII graph uses a solid block character; '#' is
+  substituted here for plain-text portability.
+* The program writes coin_toss_analysis.csv into the current
+  working directory.  Run it from a scratch directory if you do
+  not want the committed copy overwritten.

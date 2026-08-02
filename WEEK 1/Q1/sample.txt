@@ -1,0 +1,118 @@
+==============================================================
+ Q1 - Put Them in Order
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+(none - the program is self-contained and reads no input)
+
+The 12 functions are built into the program:
+    n*log2(n)      12*sqrt(n)    1/n         n^(log2 n)
+    100*n^2+6*n    n^0.51        n^2-324     50*n^0.5
+    2*n^3          3^n           (2^32)*n    log2(n)
+
+--------------------------------------------------------------
+SAMPLE OUTPUT (abridged - the full run prints 302 lines)
+--------------------------------------------------------------
+=========================================================
+ DAA Q1 : ORDERING FUNCTIONS BY RATE OF GROWTH
+=========================================================
+Two independent algorithms rank the same 12 functions:
+  1. merge sort on values actually computed at n = 1e2..1e8
+  2. merge sort on growth class only (constants/lower terms dropped)
+
+####################################
+PASS 1 : NUMERICAL RANKING PER TEST
+####################################
+
+====================================
+n = 100
+====================================
+Rank  Function         Value
+-------------------------------------------
+  1   1/n              1.0000e-02
+  2   log2(n)          6.6439e+00
+ ...
+ 12   3^n              5.1538e+47
+
+(one such table per decade, n = 10^2 .. 10^8)
+
+====================================
+RANK MOVEMENT BETWEEN CONSECUTIVE TESTS
+====================================
+Function          1e2    1e3    1e4    1e5    1e6    1e7    1e8     Moves
+--------------------------------------------------------------------------
+1/n               1      1      1      1      1      1      1       0
+log2(n)           2      2      2      2      2      2      2       0
+ ...
+
+####################################
+PASS 2 : THEORETICAL RANKING
+####################################
+
+====================================
+FINAL ASYMPTOTIC ORDER
+====================================
+   1/n                [decays towards 0, so it is below everything else]
+   |
+   v
+   log2(n)            [grows slower than n^c for every c > 0]
+   |
+   v
+   12*sqrt(n)         [polynomial of degree 0.5, constants dropped]
+   =  (same growth class, neither dominates)
+   50*n^0.5           [polynomial of degree 0.5, constants dropped]
+   |
+   v
+   n^0.51             [polynomial of degree 0.51, constants dropped]
+   |
+   v
+   (2^32)*n           [polynomial of degree 1, constants dropped]
+   |
+   v
+   n*log2(n)          [n^1 with an extra log2 n factor, so just above linear]
+   |
+   v
+   100*n^2+6*n        [polynomial of degree 2, constants dropped]
+   =  (same growth class, neither dominates)
+   n^2-324            [polynomial of degree 2, constants dropped]
+   |
+   v
+   2*n^3              [polynomial of degree 3, constants dropped]
+   |
+   v
+   n^(log2 n)         [exponent log2 n keeps growing, beats every fixed power]
+   |
+   v
+   3^n                [base 3^n, log of it is linear in n: the steepest here]
+
+====================================
+CONCLUSION
+====================================
+
+* Numerical ordering at n = 1e+08 (merge sort on measured values):
+   1/n < log2(n) < n^0.51 < 12*sqrt(n) < 50*n^0.5 < n*log2(n)
+       < n^2-324 < (2^32)*n < 100*n^2+6*n < 2*n^3 < n^(log2 n) < 3^n
+
+* Final theoretical ordering (merge sort on growth class):
+   1/n < log2(n) < 12*sqrt(n) = 50*n^0.5 < n^0.51 < (2^32)*n
+       < n*log2(n) < 100*n^2+6*n = n^2-324 < 2*n^3 < n^(log2 n) < 3^n
+
+* Agreement: 5 of 12 positions match between the numerical ranking
+   at n = 1e+08 and the theoretical ordering.
+
+Time Complexity : O(T * F log F) overall, merge sort O(F log F) each
+Space Complexity: O(F*T) for the value matrix, O(F) merge buffer
+
+--------------------------------------------------------------
+NOTES
+--------------------------------------------------------------
+* The two passes agree on only 5 of 12 positions.  n^0.51 must
+  eventually overtake 12*sqrt(n), and n^2-324 must eventually
+  overtake (2^32)*n, but neither crossover has happened by
+  n = 10^8 - the constants still dominate there.
+* 12*sqrt(n) = 50*n^0.5 and 100*n^2+6*n = n^2-324 are reported
+  as ties because each pair shares one Theta class.
+* Build with -lm:  gcc -Wall -Wextra q1_growth_order.c -o q1 -lm
