@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Language-C-A8B9CC?style=flat-square&logo=c&logoColor=white" alt="C" />
   <img src="https://img.shields.io/badge/Compiler-GCC-FE7A16?style=flat-square&logo=gnu&logoColor=white" alt="GCC" />
   <img src="https://img.shields.io/badge/Analysis-Asymptotic%20%2B%20Empirical-6E4AFF?style=flat-square" alt="Analysis" />
-  <img src="https://img.shields.io/badge/Charts-SVG%20%2B%20measured%20tables-1D9E5E?style=flat-square" alt="Charts" />
+  <img src="https://img.shields.io/badge/Charts-SVG%20%2B%20PNG%20%2B%20measured%20tables-1D9E5E?style=flat-square" alt="Charts" />
   <img src="https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-4EAA25?style=flat-square&logo=linux&logoColor=white" alt="Platform" />
 </p>
 
@@ -26,8 +26,9 @@ as the input grows. So most programs here do two jobs at once: they solve the
 problem, and then they instrument themselves — counting comparisons, counting
 moves, tabulating values across decades of `n` — so the growth can be shown
 rather than asserted. Week 1 exports its measurements to CSV and commits a plot
-beside the source; Week 2 prints its measurements as tables, each one normalised
-by the growth function it is supposed to follow, so a flat column is the proof.
+beside the source; Week 2 commits its plots too, and additionally prints its
+measurements as tables, each one normalised by the growth function it is supposed
+to follow, so a flat column is the proof.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -104,25 +105,36 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │
     ├── Q1/                                     # Dictionary Operations
     │   ├── README.md
-    │   ├── dictionary.h                        # shared interface — all six structures
-    │   ├── unsorted_array.c                    # one file per representation
-    │   ├── sorted_array.c
-    │   ├── singly_unsorted.c
-    │   ├── singly_sorted.c
-    │   ├── doubly_unsorted.c
-    │   ├── doubly_sorted.c
-    │   ├── q1_dictionary_operations.c          # driver — claim, measurement, validation
-    │   └── sample.txt
+    │   ├── q1_dictionary_operations.c          # all six structures, measurement, validation
+    │   ├── sample.txt
+    │   └── plots/                              # 6 plots of the 42 measured cells
+    │       ├── 1_all_operations.png
+    │       ├── 2_search.png
+    │       ├── 3_per_structure.png
+    │       ├── 4_complexity_table.png
+    │       ├── 5_cost_at_max_n.png
+    │       └── 6_doubling_ratio.png
     │
     ├── Q2/                                     # Merge Sort vs Three-Way Merge Sort
     │   ├── README.md
     │   ├── q2_merge_sort_variants.c
-    │   └── sample.txt
+    │   ├── sample.txt
+    │   └── plots/                              # 4 plots of the two variants
+    │       ├── 1_growth_comparisons.png
+    │       ├── 2_normalised_constants.png
+    │       ├── 3_base_of_logarithm.png
+    │       └── 4_tradeoff.png
     │
     └── Q3/                                     # Merging k Sorted Arrays
         ├── README.md
         ├── q3_merge_k_sorted_arrays.c
-        └── sample.txt
+        ├── sample.txt
+        └── plots/                              # 5 plots of the two methods
+            ├── 1_growth_moves.png
+            ├── 2_normalised_constants.png
+            ├── 3_speedup.png
+            ├── 4_sweep_n.png
+            └── 5_merge_tree_shape.png
 ```
 
 ---
@@ -155,7 +167,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
 
 | # | Question | Description | Complexity | Docs |
 |---|----------|-------------|------------|------|
-| 1 | **Dictionary Operations** | Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm. | Θ(1) to Θ(n) per operation | [README](WEEK%202/Q1/README.md) · [header](WEEK%202/Q1/dictionary.h) · [driver](WEEK%202/Q1/q1_dictionary_operations.c) |
+| 1 | **Dictionary Operations** | Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm. | Θ(1) to Θ(n) per operation | [README](WEEK%202/Q1/README.md) · [code](WEEK%202/Q1/q1_dictionary_operations.c) |
 | 2 | **Merge Sort vs Three-Way Merge Sort** | Split into thirds instead of halves and find the worst-case running time — then show what the base of the logarithm costs. | Θ(n log₃n) = Θ(n log n) | [README](WEEK%202/Q2/README.md) · [code](WEEK%202/Q2/q2_merge_sort_variants.c) |
 | 3 | **Merging k Sorted Arrays** | Accumulate sequentially, or merge in pairs until one array is left. Same `k−1` merges, different complexity class. | Θ(nk²) vs Θ(nk log k) | [README](WEEK%202/Q3/README.md) · [code](WEEK%202/Q3/q3_merge_k_sorted_arrays.c) |
 
@@ -167,9 +179,9 @@ Design-and-Analysis-of-Algorithms-Assignments/
   complexity before exiting, so the analysis travels with the code.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
   rather than assume it. Week 1 writes its measurements to CSV and commits the
-  plot as SVG beside the source; Week 2 prints the counts as a table and divides
-  each one by the growth function it should follow, so the claim stands or falls
-  on whether that column stays flat.
+  plot as SVG beside the source; Week 2 commits its plots as PNG and also prints
+  the counts as a table, dividing each one by the growth function it should
+  follow, so the claim stands or falls on whether that column stays flat.
 - **Verified samples.** Each question ships a `sample.txt` with input and output
   captured from an actual run, not written from memory.
 - **Hand-written algorithms.** Every algorithm under study is implemented from
@@ -191,9 +203,10 @@ Design-and-Analysis-of-Algorithms-Assignments/
 | GCC | any C99/C11-capable release | Compilation |
 | C standard library | — | `stdio.h`, `stdlib.h`, `string.h`, `time.h`, `math.h`, `float.h` |
 
-That is the whole list. The programs have no external dependencies — Week 1's plots
-are committed as images and Week 2 prints its measurements as tables, so reading the
-repository requires nothing but a browser and running it requires nothing but GCC.
+That is the whole list. The programs have no external dependencies — both weeks
+commit their plots as images, and Week 2 additionally prints its measurements as
+tables, so reading the repository requires nothing but a browser and running it
+requires nothing but GCC.
 
 Installing GCC, if it is not already present:
 
@@ -258,14 +271,15 @@ printf '12\n'                       | ./q3     # Q3 — array size
 > ```
 >
 > Week 1 Q1, Q5 and Q6 write nothing to disk, and neither does any Week 2
-> question — all three print their tables straight to the terminal.
+> question — all three print their tables straight to the terminal. The Week 2
+> plots were produced separately and committed; no program regenerates them.
 
-**Week 2 Q1 is split across several files** and must be compiled together: the six
-representations plus the driver, which is where the shared step counter lives.
+**Week 2 Q1 is one file** — all six representations, the claim table, the
+measurement loop and the validation.
 
 ```bash
 cd "WEEK 2/Q1"
-gcc -Wall -Wextra *.c -o q1
+gcc -Wall -Wextra q1_dictionary_operations.c -o q1
 ./q1
 ```
 
@@ -337,13 +351,12 @@ gcc -std=c11 -Wall -Wextra -O2 file.c -o out -lm
 - One folder per question, named `Q<number>`, containing the source, a `README.md`,
   a `sample.txt`, and any generated artefacts.
 - Sources are named `q<number>_<short_description>.c` — the file name describes the
-  problem, not just its number. Where a question is split across several files, the
-  driver keeps that name and the rest are named after what they implement.
+  problem, not just its number. One question, one source file.
 - Every program prints its own time and space complexity before exiting.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
-  hand-written `.svg` of the same name; Week 2 prints the measured counts as a
-  table alongside a column normalised by the growth function under test, leaving
-  nothing behind on disk.
+  hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
+  and prints the measured counts as a table alongside a column normalised by the
+  growth function under test, leaving nothing behind on disk when it runs.
 
 ---
 
