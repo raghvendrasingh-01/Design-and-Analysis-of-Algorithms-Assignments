@@ -1,0 +1,150 @@
+==============================================================
+ Q2 - Merge Sort vs Three-Way Merge Sort
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+(none)
+
+The program takes no input.  The demonstration array, the six
+problem sizes (1000 .. 32000) and the three input classes are
+built into the source.  The random class uses a fixed seed, so
+every run produces these same numbers.
+
+--------------------------------------------------------------
+SAMPLE OUTPUT
+--------------------------------------------------------------
+=====================================================
+ DAA Q2 : MERGE SORT vs THREE-WAY MERGE SORT
+=====================================================
+
+=====================================================
+ DEMONSTRATION ON A SMALL ARRAY
+=====================================================
+Input          : 38 27 43 3 9 82 10 1 55 20 7 64 
+Two-way   sort : 1 3 7 9 10 20 27 38 43 55 64 82 
+                 32 comparisons, 44 moves
+Three-way sort : 1 3 7 9 10 20 27 38 43 55 64 82 
+                 38 comparisons, 28 moves
+
+Both outputs sorted and identical : YES
+
+=====================================================
+ THE TWO RECURRENCES
+=====================================================
+Ordinary merge sort
+  T(n) = 2 T(n/2) + O(n)
+  Master theorem : a = 2, b = 2, so n^(log_b a) = n^1 = n.
+  The merge cost O(n) matches, so T(n) = O(n log n).
+  Depth of recursion = log2 n.
+
+Three-way merge sort
+  T(n) = 3 T(n/3) + O(n)
+  Master theorem : a = 3, b = 3, so n^(log_b a) = n^1 = n.
+  The merge cost O(n) matches, so T(n) = O(n log n).
+  Depth of recursion = log3 n = log2 n / log2 3.
+
+ANSWER: the modified merge sort is still O(n log n) in the
+worst case.  Splitting into thirds only changes the base of
+the logarithm, and a change of base is a constant factor
+(1 / log2 3 = 0.6309), which O-notation absorbs.
+
+Measuring ... done
+
+=====================================================
+ MEASURED COUNTS
+=====================================================
+
+Random input
+----------------------------------------------------------------------
+         n    2-way comps    3-way comps    2-way moves    3-way moves
+----------------------------------------------------------------------
+      1000           8711          10781           9976           6316
+      2000          19417          24048          21952          13836
+      4000          42771          53232          47904          30290
+      8000          93646         116719         103808          65838
+     16000         203178         252697         223616         140410
+     32000         438436         547036         479232         303674
+
+Already sorted input
+----------------------------------------------------------------------
+         n    2-way comps    3-way comps    2-way moves    3-way moves
+----------------------------------------------------------------------
+      1000           4932           5970           9976           6078
+      2000          10864          13002          21952          13144
+      4000          23728          28964          47904          29470
+      8000          51456          63008         103808          65188
+     16000         110912         136422         223616         135868
+     32000         237824         291510         479232         298074
+
+Reverse sorted input
+----------------------------------------------------------------------
+         n    2-way comps    3-way comps    2-way moves    3-way moves
+----------------------------------------------------------------------
+      1000           5044           6624           9976           6516
+      2000          11088          14624          21952          14482
+      4000          24176          31642          47904          31136
+      8000          52352          68662         103808          66482
+     16000         112704         144212         223616         144766
+     32000         241408         315840         479232         309276
+
+=====================================================
+ NORMALISED BY n log2(n)
+=====================================================
+
+Random input - counts divided by n log2(n)
+----------------------------------------------------------------------
+         n    2-way comps    3-way comps    2-way moves    3-way moves
+----------------------------------------------------------------------
+      1000          0.874          1.082          1.001          0.634
+      2000          0.885          1.097          1.001          0.631
+      4000          0.894          1.112          1.001          0.633
+      8000          0.903          1.125          1.001          0.635
+     16000          0.909          1.131          1.001          0.628
+     32000          0.915          1.142          1.001          0.634
+
+Already sorted input - counts divided by n log2(n)
+----------------------------------------------------------------------
+         n    2-way comps    3-way comps    2-way moves    3-way moves
+----------------------------------------------------------------------
+      1000          0.495          0.599          1.001          0.610
+      2000          0.495          0.593          1.001          0.599
+      4000          0.496          0.605          1.001          0.616
+      8000          0.496          0.607          1.001          0.628
+     16000          0.496          0.611          1.001          0.608
+     32000          0.497          0.609          1.001          0.622
+
+Reverse sorted input - counts divided by n log2(n)
+----------------------------------------------------------------------
+         n    2-way comps    3-way comps    2-way moves    3-way moves
+----------------------------------------------------------------------
+      1000          0.506          0.665          1.001          0.654
+      2000          0.506          0.667          1.001          0.660
+      4000          0.505          0.661          1.001          0.651
+      8000          0.505          0.662          1.001          0.641
+     16000          0.504          0.645          1.001          0.648
+     32000          0.504          0.660          1.001          0.646
+
+=====================================================
+ CONCLUSION
+=====================================================
+At n = 32000 on random input:
+
+  comparisons / (n log2 n)   2-way 0.915   3-way 1.142
+  moves       / (n log2 n)   2-way 1.001   3-way 0.634
+
+Both ratios are flat as n grows, which is what O(n log n)
+looks like when measured.  Neither variant escapes the class.
+
+The three-way version makes fewer moves, because it has
+log3 n levels instead of log2 n and every level copies n
+elements.  It makes more comparisons, because choosing the
+smallest of three heads costs 2 comparisons instead of 1.
+The two effects nearly cancel, and neither changes the
+asymptotic answer.
+
+Time Complexity  : O(n log n) for both variants
+Space Complexity : O(n) for both - one temporary array of n
+                   integers, plus O(log n) recursion stack

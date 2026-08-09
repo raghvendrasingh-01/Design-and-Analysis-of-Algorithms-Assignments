@@ -1,0 +1,160 @@
+==============================================================
+ Q1 - Dictionary Operations Across Six Representations
+ Sample Input / Sample Output
+==============================================================
+
+--------------------------------------------------------------
+SAMPLE INPUT
+--------------------------------------------------------------
+(none)
+
+The program takes no input.  The six representations, the six
+problem sizes (100 .. 3200) and the worst-case scenario for
+every operation are all built into the source.
+
+--------------------------------------------------------------
+SAMPLE OUTPUT
+--------------------------------------------------------------
+=====================================================================
+ DAA Q1 : DICTIONARY OPERATIONS ACROSS SIX REPRESENTATIONS
+=====================================================================
+
+=====================================================================
+ ASYMPTOTIC WORST-CASE RUNNING TIMES (the claim)
+=====================================================================
+Structure        Search   Insert   Delete   Max      Min      Pred     Succ     
+--------------------------------------------------------------------------------
+Unsorted array   O(n)     O(1)     O(1)     O(n)     O(n)     O(n)     O(n)     
+Sorted array     O(log n) O(n)     O(n)     O(1)     O(1)     O(1)     O(1)     
+Singly unsorted  O(n)     O(1)     O(n)     O(n)     O(n)     O(n)     O(n)     
+Singly sorted    O(n)     O(n)     O(n)     O(1)     O(1)     O(n)     O(1)     
+Doubly unsorted  O(n)     O(1)     O(1)     O(n)     O(n)     O(n)     O(n)     
+Doubly sorted    O(n)     O(n)     O(1)     O(1)     O(1)     O(1)     O(1)     
+
+Measuring ...... done
+
+=====================================================================
+ MEASURED WORST-CASE STEP COUNTS
+=====================================================================
+
+Unsorted array
+--------------------------------------------------------------
+n =                100     200     400     800    1600    3200
+Search             100     200     400     800    1600    3200
+Insert               1       1       1       1       1       1
+Delete               1       1       1       1       1       1
+Maximum            100     200     400     800    1600    3200
+Minimum            100     200     400     800    1600    3200
+Predecessor        100     200     400     800    1600    3200
+Successor          100     200     400     800    1600    3200
+
+Sorted array
+--------------------------------------------------------------
+n =                100     200     400     800    1600    3200
+Search               7       8       9      10      11      12
+Insert             106     207     408     809    1610    3211
+Delete             100     200     400     800    1600    3200
+Maximum              1       1       1       1       1       1
+Minimum              1       1       1       1       1       1
+Predecessor          1       1       1       1       1       1
+Successor            1       1       1       1       1       1
+
+Singly unsorted
+--------------------------------------------------------------
+n =                100     200     400     800    1600    3200
+Search             100     200     400     800    1600    3200
+Insert               1       1       1       1       1       1
+Delete             100     200     400     800    1600    3200
+Maximum            100     200     400     800    1600    3200
+Minimum            100     200     400     800    1600    3200
+Predecessor        100     200     400     800    1600    3200
+Successor          100     200     400     800    1600    3200
+
+Singly sorted
+--------------------------------------------------------------
+n =                100     200     400     800    1600    3200
+Search             100     200     400     800    1600    3200
+Insert             100     200     400     800    1600    3200
+Delete             100     200     400     800    1600    3200
+Maximum              1       1       1       1       1       1
+Minimum              1       1       1       1       1       1
+Predecessor        100     200     400     800    1600    3200
+Successor            1       1       1       1       1       1
+
+Doubly unsorted
+--------------------------------------------------------------
+n =                100     200     400     800    1600    3200
+Search             100     200     400     800    1600    3200
+Insert               1       1       1       1       1       1
+Delete               1       1       1       1       1       1
+Maximum            100     200     400     800    1600    3200
+Minimum            100     200     400     800    1600    3200
+Predecessor        100     200     400     800    1600    3200
+Successor          100     200     400     800    1600    3200
+
+Doubly sorted
+--------------------------------------------------------------
+n =                100     200     400     800    1600    3200
+Search             100     200     400     800    1600    3200
+Insert             100     200     400     800    1600    3200
+Delete               1       1       1       1       1       1
+Maximum              1       1       1       1       1       1
+Minimum              1       1       1       1       1       1
+Predecessor          1       1       1       1       1       1
+Successor            1       1       1       1       1       1
+
+=====================================================================
+ VALIDATION : CLAIMED CLASS vs CLASS INFERRED FROM MEASUREMENT
+=====================================================================
+Structure         Operation       Ratio  Claimed   Observed  Verdict
+------------------------------------------------------------------------
+Unsorted array    Search          2.000  O(n)      O(n)      MATCH
+Unsorted array    Insert          1.000  O(1)      O(1)      MATCH
+Unsorted array    Delete          1.000  O(1)      O(1)      MATCH
+Unsorted array    Maximum         2.000  O(n)      O(n)      MATCH
+Unsorted array    Minimum         2.000  O(n)      O(n)      MATCH
+Unsorted array    Predecessor     2.000  O(n)      O(n)      MATCH
+Unsorted array    Successor       2.000  O(n)      O(n)      MATCH
+Sorted array      Search          1.091  O(log n)  O(log n)  MATCH
+Sorted array      Insert          1.994  O(n)      O(n)      MATCH
+Sorted array      Delete          2.000  O(n)      O(n)      MATCH
+Sorted array      Maximum         1.000  O(1)      O(1)      MATCH
+Sorted array      Minimum         1.000  O(1)      O(1)      MATCH
+Sorted array      Predecessor     1.000  O(1)      O(1)      MATCH
+Sorted array      Successor       1.000  O(1)      O(1)      MATCH
+Singly unsorted   Search          2.000  O(n)      O(n)      MATCH
+Singly unsorted   Insert          1.000  O(1)      O(1)      MATCH
+Singly unsorted   Delete          2.000  O(n)      O(n)      MATCH
+Singly unsorted   Maximum         2.000  O(n)      O(n)      MATCH
+Singly unsorted   Minimum         2.000  O(n)      O(n)      MATCH
+Singly unsorted   Predecessor     2.000  O(n)      O(n)      MATCH
+Singly unsorted   Successor       2.000  O(n)      O(n)      MATCH
+Singly sorted     Search          2.000  O(n)      O(n)      MATCH
+Singly sorted     Insert          2.000  O(n)      O(n)      MATCH
+Singly sorted     Delete          2.000  O(n)      O(n)      MATCH
+Singly sorted     Maximum         1.000  O(1)      O(1)      MATCH
+Singly sorted     Minimum         1.000  O(1)      O(1)      MATCH
+Singly sorted     Predecessor     2.000  O(n)      O(n)      MATCH
+Singly sorted     Successor       1.000  O(1)      O(1)      MATCH
+Doubly unsorted   Search          2.000  O(n)      O(n)      MATCH
+Doubly unsorted   Insert          1.000  O(1)      O(1)      MATCH
+Doubly unsorted   Delete          1.000  O(1)      O(1)      MATCH
+Doubly unsorted   Maximum         2.000  O(n)      O(n)      MATCH
+Doubly unsorted   Minimum         2.000  O(n)      O(n)      MATCH
+Doubly unsorted   Predecessor     2.000  O(n)      O(n)      MATCH
+Doubly unsorted   Successor       2.000  O(n)      O(n)      MATCH
+Doubly sorted     Search          2.000  O(n)      O(n)      MATCH
+Doubly sorted     Insert          2.000  O(n)      O(n)      MATCH
+Doubly sorted     Delete          1.000  O(1)      O(1)      MATCH
+Doubly sorted     Maximum         1.000  O(1)      O(1)      MATCH
+Doubly sorted     Minimum         1.000  O(1)      O(1)      MATCH
+Doubly sorted     Predecessor     1.000  O(1)      O(1)      MATCH
+Doubly sorted     Successor       1.000  O(1)      O(1)      MATCH
+------------------------------------------------------------------------
+Agreement: 42 of 42 claims reproduced by measurement.
+
+Time Complexity  : see the claim table above, per structure
+                   and per operation
+Space Complexity : O(n) for every representation.  A singly
+                   linked list adds one pointer per node, a
+                   doubly linked list adds two.

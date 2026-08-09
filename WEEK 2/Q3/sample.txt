@@ -1,0 +1,100 @@
+SAMPLE INPUT
+============
+
+(none - the program takes no input; k and n values are built in)
+
+
+SAMPLE OUTPUT
+=============
+
+=====================================================
+ DAA Q3 : MERGING k SORTED ARRAYS OF n ELEMENTS
+=====================================================
+
+=====================================================
+ DEMONSTRATION : k = 4 arrays of n = 3 elements
+=====================================================
+Array 1 :   1   8  15 
+Array 2 :   2   9  20 
+Array 3 :   5   6  30 
+Array 4 :   3  11  12 
+
+Method 1 output : 1 2 3 5 6 8 9 11 12 15 20 30 
+                  27 element moves
+Method 2 output : 1 2 3 5 6 8 9 11 12 15 20 30 
+                  24 element moves
+
+Both sorted : YES
+Method 1 needed 27 moves, method 2 needed 24.
+Even at k = 4 the repeated merging is already doing more work.
+
+=====================================================
+ THE TWO RUNNING TIMES
+=====================================================
+Method 1 - merge one array in at a time
+  Round i merges a block of size i*n with an array of size n.
+  Total = 2n + 3n + ... + kn = n(k(k+1)/2 - 1) = O(n k^2)
+  The first array's elements get copied k-1 times.
+
+Method 2 - merge in pairs, halving the count each round
+  Every round moves all kn elements exactly once.
+  The number of rounds is log2(k).
+  Total = kn * log2(k) = O(n k log k)
+
+Method 2 is better by a factor of Theta(k / log k).
+Putting the leading constants back in, method 1 costs about
+n k^2 / 2 and method 2 about n k log2(k), so the speedup to
+expect in practice is k / (2 log2 k).
+At k = 64 that predicts about 5.3 times.
+
+Measuring ........... done
+
+=====================================================
+ VARYING k, WITH n FIXED AT 200
+=====================================================
+------------------------------------------------------------------------------
+     k       M1 moves       M2 moves    speedup   M1/(n k^2) M2/(nk log k)
+------------------------------------------------------------------------------
+     2            400            400       1.00       0.5000       1.0000
+     4           1800           1600       1.12       0.5625       1.0000
+     8           7000           4800       1.46       0.5469       1.0000
+    16          27000          12800       2.11       0.5273       1.0000
+    32         105400          32000       3.29       0.5146       1.0000
+    64         415800          76800       5.41       0.5076       1.0000
+
+The M1/(n k^2) column settles near 0.5, which is the n k^2 / 2
+predicted above.  The M2/(n k log k) column settles near 1.0.
+Both normalisations are flat, so both formulas are right.
+
+=====================================================
+ VARYING n, WITH k FIXED AT 16
+=====================================================
+----------------------------------------------------------------
+       n       M1 moves       M2 moves    speedup    predicted
+----------------------------------------------------------------
+     100          13500           6400       2.11         2.00
+     200          27000          12800       2.11         2.00
+     400          54000          25600       2.11         2.00
+     800         108000          51200       2.11         2.00
+    1600         216000         102400       2.11         2.00
+
+Both methods are linear in n, so doubling n doubles both
+counts and the speedup column does not move.  The gap between
+the methods is controlled by k alone, not by n.
+
+=====================================================
+ CONCLUSION
+=====================================================
+Method 1 : O(n k^2)     - repeated merging into a growing
+                          block, so early elements are
+                          copied over and over
+Method 2 : O(n k log k) - a balanced merge tree, so every
+                          element is copied once per round
+                          and there are only log2(k) rounds
+
+Both were checked at every size: the output is sorted and
+holds all kn elements.
+
+Time Complexity  : method 1 O(n k^2), method 2 O(n k log k)
+Space Complexity : O(n k) for both - the merged output plus
+                   one working buffer of the same size
