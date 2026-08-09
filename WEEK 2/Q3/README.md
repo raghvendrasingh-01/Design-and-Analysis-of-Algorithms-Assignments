@@ -114,7 +114,8 @@ would pollute the measurement at small `k`.
 normalised column — `M1/(n k²)` and `M2/(nk log k)`. Those two columns are the
 evidence: one settles at 0.5 and the other sits at exactly 1.0000, which pins each
 method to its claimed formula far more tightly than two rising curves on a shared
-axis ever could.
+axis ever could. Plots of the same measurements are committed under
+[`plots/`](plots) and listed below.
 
 ---
 
@@ -228,6 +229,22 @@ merge subroutine, and the only difference is the order the merges are scheduled
 in. That is the entire lesson of the question.
 
 ---
+
+## Committed Artefacts
+
+The program itself writes nothing to disk. The plots below were produced
+separately from its tabulated output and committed alongside the source. Their
+`k` and `n` ranges run wider than the program's own sweeps (`k` = 2 … 64 at
+`n` = 200, and `n` = 100 … 1600 at `k` = 16); the quantities plotted are the ones
+the program counts.
+
+| File | Description |
+|------|-------------|
+| [`plots/1_growth_moves.png`](plots/1_growth_moves.png) | Element moves for both methods as `k` grows — `nk²` against `nk log k` |
+| [`plots/2_normalised_constants.png`](plots/2_normalised_constants.png) | `M1/(n k²)` settling at 0.5 and `M2/(nk log k)` at 1.0 |
+| [`plots/3_speedup.png`](plots/3_speedup.png) | Measured speedup against the predicted `k / (2 log₂ k)` |
+| [`plots/4_sweep_n.png`](plots/4_sweep_n.png) | Both methods linear in `n`, so the speedup does not move |
+| [`plots/5_merge_tree_shape.png`](plots/5_merge_tree_shape.png) | Why the schedule is the whole difference — a skewed chain against a balanced tree |
 
 ## Build and Run
 

@@ -98,7 +98,8 @@ prints the raw counts across six doubling sizes and then divides each one by
 `n log₂ n`. That second table is the stronger evidence: a curve drawn on a linear
 axis makes `n log n` and `n²` look much alike, whereas a normalised column that
 stays at 1.001 across a 32× range of `n` can only mean `n log n`, and one that
-climbed would falsify the claim outright.
+climbed would falsify the claim outright. Plots of the same measurements are
+committed under [`plots/`](plots) and listed below.
 
 ---
 
@@ -220,6 +221,20 @@ always merges the full width regardless of what the data looks like. Only the
 comparison counts shift, and only by a constant.
 
 ---
+
+## Committed Artefacts
+
+The program itself writes nothing to disk. The plots below were produced
+separately from its tabulated output and committed alongside the source. Their
+`n` range runs wider than the program's own sweep of 1000 … 32000; the quantities
+plotted are the ones the program counts.
+
+| File | Description |
+|------|-------------|
+| [`plots/1_growth_comparisons.png`](plots/1_growth_comparisons.png) | Raw comparison counts for both variants as `n` grows |
+| [`plots/2_normalised_constants.png`](plots/2_normalised_constants.png) | Each count divided by `n log₂ n` — the flat columns that carry the claim |
+| [`plots/3_base_of_logarithm.png`](plots/3_base_of_logarithm.png) | The measured three-way move ratio against `1/log₂3 = 0.6309` |
+| [`plots/4_tradeoff.png`](plots/4_tradeoff.png) | Fewer moves against more comparisons — the two effects that nearly cancel |
 
 ## Build and Run
 
