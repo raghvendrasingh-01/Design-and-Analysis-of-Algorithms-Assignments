@@ -5,11 +5,11 @@
 
 | | |
 |---|---|
-| **Header** | [`dictionary.h`](dictionary.h) |
-| **Sources** | six implementation files + [`q1_dictionary_operations.c`](q1_dictionary_operations.c) |
+| **Source** | [`q1_dictionary_operations.c`](q1_dictionary_operations.c) |
+| **Lines** | 499 — one file for all six representations and the measurement |
 | **Sample file** | [`sample.txt`](sample.txt) |
 | **Input** | None — sizes and worst-case scenarios are built into the program |
-| **Build** | `gcc -Wall -Wextra *.c -o q1` |
+| **Build** | `gcc -Wall -Wextra q1_dictionary_operations.c -o q1` |
 | **Output** | Printed to the terminal — the claim table, the measured step counts, and the validation |
 
 ---
@@ -72,39 +72,16 @@ The three interesting rows:
 
 ---
 
-## File Layout
-
-The six representations are separated into one file each, all sharing a single
-header. Each file is self-contained: it owns its seven operations and its own
-measurement routine, so a representation can be read and understood on its own.
-
-| File | Contents | Prefix |
-|------|----------|--------|
-| [`dictionary.h`](dictionary.h) | Struct definitions and prototypes for all six | — |
-| [`unsorted_array.c`](unsorted_array.c) | Unsorted array | `ua` |
-| [`sorted_array.c`](sorted_array.c) | Sorted array | `sa` |
-| [`singly_unsorted.c`](singly_unsorted.c) | Singly linked unsorted list | `su` |
-| [`singly_sorted.c`](singly_sorted.c) | Singly linked sorted list | `ss` |
-| [`doubly_unsorted.c`](doubly_unsorted.c) | Doubly linked unsorted list | `du` |
-| [`doubly_sorted.c`](doubly_sorted.c) | Doubly linked sorted list | `ds` |
-| [`q1_dictionary_operations.c`](q1_dictionary_operations.c) | The claim table, the measurement loop and the validation | — |
-
-Every representation exposes the same seven operations with the same meaning, so
-they are directly comparable. The driver calls `xxMeasure(n, result)` on each and
-never needs to know how any of them work.
-
----
-
 ## Approach
 
 The table above is not printed from a hardcoded list and left there. All six
 structures are actually implemented, and each of the 42 cells is then measured.
 
-**A step counter as the cost model.** One global counter, declared in
-`dictionary.h` and defined in the driver, is incremented on every key comparison
-and every pointer or index move. Wall-clock time is avoided deliberately — it
-depends on the compiler and the machine, and at these sizes it is mostly noise.
-Step counts are exact and reproducible.
+**A step counter as the cost model.** One global counter, defined in the file and
+reset before every measurement, is incremented on every key comparison and every
+pointer or index move. Wall-clock time is avoided deliberately — it depends on the
+compiler and the machine, and at these sizes it is mostly noise. Step counts are
+exact and reproducible.
 
 **Worst cases are constructed, not sampled.** Averaging over random inputs would
 measure the average case, which is not what the question asks. Each measurement
@@ -117,6 +94,14 @@ forces the worst case instead:
 | `Delete` | the item that is most expensive to unlink |
 | `Maximum` / `Minimum` | the extreme sits at the far end of an unsorted structure |
 | `Predecessor` / `Successor` | the element whose neighbour is furthest away |
+
+**Two families generate all six rows.** The two arrays differ only in whether
+order is maintained; the four lists differ only in that and in whether a back
+pointer may be read. One `Array` struct with a `sorted` flag and one `List` struct
+with `sorted` and `dbl` flags therefore serve all six representations — not a
+trick of the compression, but the shape of the claim table itself. The singly
+linked nodes still carry a `prev` field; those rows are *defined by never reading
+it*, which is exactly what makes their Delete and Predecessor O(n).
 
 **Class inference from the doubling ratio.** Sizes double: 100, 200, …, 3200.
 For each cell the program computes `steps(3200) / steps(1600)` and infers the
@@ -137,7 +122,9 @@ program prints instead is the step count for every operation at every size,
 followed by the doubling ratio and the class it implies. The table carries the
 same information a curve would, and more precisely: a reader can check that
 `Search` on a sorted array reads 7, 8, 9, 10, 11, 12 and see the logarithm
-directly, which is not something you can read off a drawn axis.
+directly, which is not something you can read off a drawn axis. The plots below
+were produced separately from the program's tabulated output and committed
+alongside the source.
 
 ---
 
@@ -154,8 +141,8 @@ measurement can be contaminated by the one before it.
 ## Space Complexity
 
 **O(n)** — only one structure is alive at a time and it is freed before the next
-is built. Arrays hold `n` keys; a singly linked list adds one pointer per node, a
-doubly linked list two.
+is built. The array family holds `n` keys; the list family adds one pointer per
+node for the singly linked rows and two for the doubly linked rows.
 
 ---
 
@@ -254,27 +241,33 @@ beyond this exercise.
 
 ---
 
+## Committed Artefacts
+
+The program itself writes nothing to disk. The plots below were produced
+separately from its tabulated output and committed alongside the source.
+
+| File | Description |
+|------|-------------|
+| [`plots/1_all_operations.png`](plots/1_all_operations.png) | All 42 measured step counts across the six structures |
+| [`plots/2_search.png`](plots/2_search.png) | The seven `Search` rows — sorted array logarithmic, everything else linear |
+| [`plots/3_per_structure.png`](plots/3_per_structure.png) | Each structure's seven operations, per structure |
+| [`plots/4_complexity_table.png`](plots/4_complexity_table.png) | The claim table rendered as heatmap |
+| [`plots/5_cost_at_max_n.png`](plots/5_cost_at_max_n.png) | All 42 cells at the largest size, `n = 3200` |
+| [`plots/6_doubling_ratio.png`](plots/6_doubling_ratio.png) | The doubling ratio behind the class inference |
+
 ## Build and Run
 
 ```bash
-gcc -Wall -Wextra *.c -o q1
+gcc -Wall -Wextra q1_dictionary_operations.c -o q1
 ./q1
 ```
 
-All seven `.c` files must be compiled together — the six implementations and the
-driver. The driver defines the `steps` counter that the other six declare as
-`extern` through the header.
+The whole question lives in one file — the six representations, the claim table,
+the measurement loop and the validation.
 
 ## Files
 
 | File | Description |
 |------|-------------|
-| [`dictionary.h`](dictionary.h) | Shared interface — structs and prototypes for all six representations |
-| [`unsorted_array.c`](unsorted_array.c) | Unsorted array, seven operations plus its measurement routine |
-| [`sorted_array.c`](sorted_array.c) | Sorted array, with binary search |
-| [`singly_unsorted.c`](singly_unsorted.c) | Singly linked unsorted list |
-| [`singly_sorted.c`](singly_sorted.c) | Singly linked sorted list |
-| [`doubly_unsorted.c`](doubly_unsorted.c) | Doubly linked unsorted list |
-| [`doubly_sorted.c`](doubly_sorted.c) | Doubly linked sorted list |
-| [`q1_dictionary_operations.c`](q1_dictionary_operations.c) | Driver — claim table, measurement loop, validation |
-| [`sample.txt`](sample.txt) | Sample input and output |
+| [`q1_dictionary_operations.c`](q1_dictionary_operations.c) | Everything — all six representations, the claim table, the measurement and the validation |
+| [`sample.txt`](sample.txt) | Sample output |
