@@ -32,6 +32,7 @@ void merge2(int a[], int temp[], int lo, int mid, int hi) {
         if (a[i] <= a[j]) temp[t++] = a[i++];
         else temp[t++] = a[j++];
         moves++;
+        
     }
     while (i < mid) { temp[t++] = a[i++]; moves++; }   /* tail of either run: */
     while (j < hi)  { temp[t++] = a[j++]; moves++; }   /* moves, no comparisons */
