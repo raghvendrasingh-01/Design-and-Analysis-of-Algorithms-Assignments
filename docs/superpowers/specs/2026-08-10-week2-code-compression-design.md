@@ -128,7 +128,23 @@ Big-O string table, `measured[6][7][6]`, `printClaimTable`, `printMeasurements`,
 and its Time/Space Complexity footer. `measureOne`'s six-way `if`/`else` chain
 becomes a small dispatch over `(family, flags)` triples.
 
-**Estimate: ≈455 lines**, against a 500 budget.
+**Budget arithmetic.**
+
+| Component | Lines |
+|---|---|
+| Includes, `NOPS` and the operation constants, `steps`, `resetSteps` | ~15 |
+| Array family — struct, 7 operations, measure routine | ~90 |
+| List family — structs, 7 operations, measure routine | ~110 |
+| Driver — name and claim tables, 3 printers, `inferClass`, validation, `main` | ~150 |
+| **Code subtotal** | **~365** |
+| Comments and blank lines | ~90 |
+| **Total** | **~455** |
+
+The ~90 lines of comments and spacing are deliberate, not slack. This is a lab
+submission that has to be read as well as run — the flag-driven design needs its
+reasoning on the page, particularly the shared-node caveat below. The 45 lines of
+headroom against the 500 budget absorb estimate error; if the file lands over 500,
+comment density is what gives first, and the algorithms are not touched.
 
 ### What must still be true afterwards
 
@@ -203,15 +219,20 @@ stating plainly where a plot's range exceeds the committed program's sweep.
 | "All seven `.c` files must be compiled together…" paragraph | Replace; there is no longer an `extern` counter or a shared header |
 | Build and Run code block | Single-file `gcc` command |
 | "Files" table (9 rows) | Reduce to the single source plus `sample.txt` and the plots |
-| "the full run prints 143 lines" | Verify against the regenerated output; correct if it moved |
+| "the full run prints 143 lines" (line 172) | Verify it still reads 143. If it moved, the compression failed — fix the code, not the number |
 | Space Complexity section | Add the shared-node note |
 
 ### `WEEK 2/Q2/README.md` and `WEEK 2/Q3/README.md`
 
 Filenames and build commands are unchanged, so only stale counts and claims need
-editing, plus the new Plots section. Known reference points — Q2 lines 8, 11, 227,
-231, 233, 235; Q3 lines 9, 12, 235, 239, 241, 243 — are re-checked against the
-file at edit time rather than trusted blind.
+editing, plus the new Plots section. The only occurrence in each is the
+"Abridged — the full run prints N lines" sentence — Q2 line 128 (132 lines), Q3
+line 142 (91 lines). Both are re-verified against the regenerated output rather
+than trusted blind. The remaining reference points from exploration — Q2 lines 8,
+11, 227, 231, 233, 235; Q3 lines 9, 12, 235, 239, 241, 243 — were re-checked
+just now: the Source and Build rows (Q2 8/11, Q3 9/12) and both `-lm` build
+blocks (Q2 227, Q3 235) name filenames that do not change, and the "Files" tables
+hold no line counts. They need no edits.
 
 ### `README.md` (root)
 
@@ -223,13 +244,27 @@ file at edit time rather than trusted blind.
 | Q1 build note (≈lines 263–264) | "**Week 2 Q1 is split across several files** and must be compiled together…" is void — replace |
 | Build code block (≈lines 266–270) | `gcc -Wall -Wextra q1_dictionary_operations.c -o q1` instead of `*.c` |
 | Q2/Q3 `-lm` note (≈lines 272–278) | Verify it still reads correctly |
-| Determinism claim (≈line 280) | Holds, but only after the regenerated `sample.txt` files are byte-verified — that verification is what earns the sentence |
+| Determinism claim (≈line 280) | Holds, but only after the `sample.txt` outputs are byte-verified — that verification is what earns the sentence |
 
 ### `sample.txt` files
 
-All three are regenerated from the new binaries. None of them mentions a
-filename, a header, or `gcc`, so they need no prose surgery — only regeneration
-and byte-verification.
+**These are expected to need no edit at all**, and that is the point rather than
+an oversight. Byte-identical output means the output section of each `sample.txt`
+is already correct. None of the three mentions a filename, a header, or `gcc`
+either — verified by grep — so the compression cannot invalidate their prose.
+
+So the action is verification, not regeneration: the output of each new binary is
+diffed against the output section already committed in `sample.txt`. A clean diff
+confirms the compression preserved behaviour. **A dirty diff means the compression
+broke something** and is investigated, not papered over by overwriting the file.
+
+Each `sample.txt` also carries a wrapper — a banner plus "SAMPLE INPUT" and
+"SAMPLE OUTPUT" headings, 17 lines in Q1's case (160 total against 143 of
+output). That wrapper is preserved untouched. Nothing in this work regenerates a
+`sample.txt` wholesale, which would risk clobbering it.
+
+(Q3's wrapper uses a plainer heading style than Q1's and Q2's. That inconsistency
+predates this work and is left alone — see "Out of scope".)
 
 ---
 
@@ -249,7 +284,8 @@ Per question, in the `/tmp` scratchpad:
    the baselines are recaptured from the committed sources at `HEAD` *before* any
    source is modified — never after.
 5. `wc -l` the source and record it against its budget.
-6. Regenerate `sample.txt` from the verified output.
+6. Diff the verified output against the output section already committed in
+   `sample.txt`, per the section above. Expect no change to the file.
 
 A per-question summary is reported at the end: landed line count, budget,
 warnings, and baseline diff result.
@@ -265,4 +301,22 @@ warnings, and baseline diff result.
   the 3 unfaithful ones are deleted, not redrawn. The script that produced them
   is not in the repository and is not reconstructed here.
 - Reformatting or restructuring any README section that the compression does not
-  invalidate.
+  invalidate. In particular, Q3's `sample.txt` heading style differs from Q1's and
+  Q2's; that predates this work and stays.
+
+---
+
+## Definition of done
+
+1. Three single-file sources, each within budget, each compiling warning-free
+   under `-Wall -Wextra`.
+2. Three baseline diffs clean — output byte-identical to `HEAD`.
+3. All 42 Q1 cells still measured and printed; Q2 and Q3 measurement coverage
+   untouched.
+4. Seven files deleted from Q1 — `dictionary.h` plus the six implementations,
+   taking 8 files to 1. `q1_dictionary_operations.c` keeps its name and becomes
+   the single source, so no README link to it breaks. Three PNGs deleted.
+5. Every document that described the old layout updated, and the root README's
+   pre-existing "Week 2 prints its measurements as tables" inaccuracy corrected.
+6. A Plots section in each of the three question READMEs.
+7. Landed line counts reported per question against budget.
