@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAA Lab Map — Skyline</title>
+<style>
+  :root{
+    --bg:#0b1120; --panel:rgba(15,23,42,.82); --line:rgba(148,163,184,.22);
+    --fg:#e2e8f0; --dim:#94a3b8; --accent:#38bdf8;
+    --bg:#05070f;--panel:rgba(8,14,28,.86);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);
+    font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  canvas{display:block;outline:none}
+  #stage{position:fixed;inset:0}
+  a{color:var(--accent)}
+
+  .panel{position:fixed;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;backdrop-filter:blur(12px);
+    box-shadow:0 12px 40px rgba(0,0,0,.45);z-index:5}
+
+  #title{top:18px;left:18px;max-width:340px}
+  #title h1{margin:0;font-size:17px;font-weight:650;letter-spacing:-.01em}
+  #title p{margin:5px 0 0;font-size:12.5px;color:var(--dim)}
+  #title .sub{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--dim)}
+  #title b{color:var(--fg);font-weight:600}
+
+  #nav{top:18px;right:18px;display:flex;gap:6px;padding:8px}
+  #nav button{font:inherit;font-size:12.5px;color:var(--dim);background:transparent;
+    border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;
+    transition:.16s}
+  #nav button:hover{color:var(--fg);border-color:rgba(56,189,248,.55);
+    background:rgba(56,189,248,.10)}
+  #nav button.on{color:#0b1120;background:var(--accent);border-color:var(--accent);
+    font-weight:600}
+
+  /* style switcher — the four variants are the same data, so let people flip */
+  #styles{top:18px;left:50%;transform:translateX(-50%);display:flex;
+    align-items:center;gap:4px;padding:7px 9px}
+  #styles em{font-style:normal;font-size:10.5px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--dim);margin-right:4px}
+  #styles a{font-size:12px;color:var(--dim);text-decoration:none;padding:5px 9px;
+    border-radius:8px;transition:.16s}
+  #styles a:hover{color:var(--fg);background:rgba(148,163,184,.13)}
+  #styles a.on{color:var(--fg);background:rgba(56,189,248,.18);
+    box-shadow:inset 0 0 0 1px rgba(56,189,248,.45);font-weight:600}
+
+  #legend{bottom:18px;left:18px;padding:13px 16px}
+  #legend h2{margin:0 0 3px;font-size:11px;font-weight:650;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--dim)}
+  #legend .note{margin:0 0 9px;font-size:11px;color:var(--dim);opacity:.85}
+  #legend ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+  #legend li{display:flex;align-items:center;gap:9px;font-size:12px}
+  #legend i{width:11px;border-radius:3px;flex:none;display:block}
+  #legend span{color:var(--dim);font-variant-numeric:tabular-nums}
+
+  #hint{bottom:18px;right:18px;font-size:11.5px;color:var(--dim);padding:11px 14px;
+    max-width:260px}
+  #hint kbd{font:inherit;font-size:10.5px;background:rgba(148,163,184,.16);
+    border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--fg)}
+  #hint div+div{margin-top:5px}
+
+  #tip{position:fixed;z-index:20;pointer-events:none;opacity:0;max-width:330px;
+    background:rgba(2,6,23,.94);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;box-shadow:0 16px 44px rgba(0,0,0,.6);
+    transition:opacity .13s;backdrop-filter:blur(10px)}
+  #tip .eyebrow{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--dim);margin-bottom:3px}
+  #tip h3{margin:0 0 6px;font-size:14px;font-weight:640;line-height:1.3}
+  #tip .cx{font-size:11.5px;margin-bottom:7px;color:#cbd5e1}
+  #tip .desc{font-size:12px;color:var(--dim);margin:0 0 9px}
+  #tip .go{font-size:11px;color:var(--accent);border-top:1px solid var(--line);
+    padding-top:7px}
+  #tip code{background:rgba(148,163,184,.15);border-radius:4px;padding:0 3px;
+    font-size:.92em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  #fallback{position:fixed;inset:0;display:none;place-content:center;text-align:center;
+    padding:40px;z-index:99;background:var(--bg)}
+  #fallback.show{display:grid}
+
+  @media (max-width:980px){ #styles{display:none} }
+  @media (max-width:820px){
+    #legend,#hint{display:none}
+    #title{max-width:none;right:18px}
+    #nav{top:auto;bottom:18px;left:18px;right:18px;justify-content:center}
+  }
+
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="title" class="panel">
+  <h1>Design &amp; Analysis of Algorithms</h1>
+  <p>The labs as a city at night. <b>Height and window colour are both the complexity class</b> — the red tower is Θ(2ⁿ).</p>
+  <div class="sub"><b id="stat-q">–</b> questions across <b id="stat-w">–</b> lab
+     sessions · click any tower to open it on GitHub</div>
+</div>
+
+<div id="styles" class="panel"><em>style</em><a href="index.html">Cards</a><a href="districts.html">Districts</a><a href="iso.html">Isometric</a><a href="skyline.html" class="on">Skyline</a></div>
+
+<div id="nav" class="panel">
+  <button data-focus="all" class="on">All</button>
+  <button data-focus="0">Week 1</button>
+  <button data-focus="1">Week 2</button>
+  <button data-focus="2">Week 3</button>
+</div>
+
+<div id="legend" class="panel">
+  <h2>Tower height</h2>
+  <p class="note">and the colour its windows burn</p>
+  <ul id="legend-list"></ul>
+</div>
+
+<div id="hint" class="panel">
+  <div><kbd>drag</kbd> orbit &nbsp; <kbd>scroll</kbd> zoom</div>
+  <div><kbd>right-drag</kbd> pan &nbsp; <kbd>click</kbd> open</div>
+  <div><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> jump to a district &nbsp; <kbd>0</kbd> reset</div>
+</div>
+
+<div id="tip">
+  <div class="eyebrow"></div><h3></h3>
+  <div class="cx"></div><p class="desc"></p><div class="go"></div>
+</div>
+
+<div id="fallback">
+  <div>
+    <h1 style="font-size:19px">WebGL is unavailable</h1>
+    <p style="color:#94a3b8;max-width:420px">This map needs hardware-accelerated
+    WebGL. Try a different browser, or read the flat lab index in the repository
+    README instead.</p>
+  </div>
+</div>
+
+<script src="three.min.js"></script>
+<!-- vendored locally so the page works offline; CDN only if that copy is missing -->
+<script>window.THREE||document.write('<scr'+'ipt src="https://unpkg.com/three@0.155.0/build/three.min.js"><\/scr'+'ipt>')</script>
+<script>
+"use strict";
+const DATA = {"weeks": [{"n": 1, "lab": "Lab 01", "date": "28 Jul 2026", "folder": "WEEK 1", "topic": "Growth of functions, empirical analysis, recurrences", "figs": "10 figures", "short": "growth · simulation · recurrences", "questions": [{"q": 1, "title": "Put Them in Order", "tag": "Growth Order", "cx": "TF^2 + T^2F", "rank": 4, "cxmd": "Θ(T·F² + T²·F) time, Θ(F·T) space", "desc": "Arrange 12 given functions in increasing order of growth for sufficiently large <code>n</code>.", "plain": "Arrange 12 given functions in increasing order of growth for sufficiently large n.", "plots": 7, "src": "q1_growth_order.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q1", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q1/q1_growth_order.c"}, {"q": 2, "title": "Fair vs Biased Coin", "tag": "Coin Toss", "cx": "n", "rank": 2, "cxmd": "Θ(n) time, Θ(1) space", "desc": "Simulate a coin toss, verify that P(HEAD) → 0.5, then compare a fair coin against biased ones.", "plain": "Simulate a coin toss, verify that P(HEAD) → 0.5, then compare a fair coin against biased ones.", "plots": 0, "src": "q2_coin_toss.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q2", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q2/q2_coin_toss.c"}, {"q": 3, "title": "Bubble Sort Performance", "tag": "Bubble Sort", "cx": "n^2", "rank": 4, "cxmd": "Ω(n) / O(n²) time, Θ(1) space", "desc": "Compare a bubble sort that stops early once sorted against one that always runs all <code>n−1</code> passes.", "plain": "Compare a bubble sort that stops early once sorted against one that always runs all n−1 passes.", "plots": 0, "src": "q3_bubble_sort_performance_analysis.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q3", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q3/q3_bubble_sort_performance_analysis.c"}, {"q": 4, "title": "Towers of Hanoi", "tag": "Hanoi", "cx": "2^n", "rank": 6, "cxmd": "Θ(2ⁿ) time, Θ(n) space", "desc": "Simulate the puzzle, tabulate moves for <code>n</code> discs, and match against the closed form.", "plain": "Simulate the puzzle, tabulate moves for n discs, and match against the closed form.", "plots": 0, "src": "q4_towers_of_hanoi.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q4", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q4/q4_towers_of_hanoi.c"}, {"q": 5, "title": "Find the Partition Point", "tag": "Partition Pt", "cx": "log n", "rank": 1, "cxmd": "Θ(log n) time, Θ(1) space", "desc": "Given an array of 0s followed by 1s, locate the exact transition index.", "plain": "Given an array of 0s followed by 1s, locate the exact transition index.", "plots": 0, "src": "q5_partition_point.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q5", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q5/q5_partition_point.c"}, {"q": 6, "title": "Element Uniqueness", "tag": "Uniqueness", "cx": "n^2", "rank": 4, "cxmd": "O(n²) time, Θ(1) space", "desc": "Check whether <code>n</code> given numbers are all distinct, and reason about the cost for large <code>n</code>.", "plain": "Check whether n given numbers are all distinct, and reason about the cost for large n.", "plots": 0, "src": "q6_element_uniqueness.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q6", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q6/q6_element_uniqueness.c"}]}, {"n": 2, "lab": "Lab 02", "date": "04 Aug 2026", "folder": "WEEK 2", "topic": "Data structure trade-offs, divide and conquer, the master theorem", "figs": "15 figures", "short": "data structures · splitting k ways", "questions": [{"q": 1, "title": "Dictionary Operations", "tag": "Dictionary", "cx": "1 .. n", "rank": 2, "cxmd": "Θ(1) to Θ(n) per operation", "desc": "Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm.", "plain": "Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm.", "plots": 6, "src": "q1_dictionary_operations.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%202/Q1", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%202/Q1/q1_dictionary_operations.c"}, {"q": 2, "title": "Merge Sort vs Three-Way Merge Sort", "tag": "Merge Sort x3", "cx": "n log n", "rank": 3, "cxmd": "Θ(n log₃n) = Θ(n log n)", "desc": "Split into thirds instead of halves and find the worst-case running time — then show what the base of the logarithm costs.", "plain": "Split into thirds instead of halves and find the worst-case running time — then show what the base of the logarithm costs.", "plots": 4, "src": "q2_merge_sort_variants.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%202/Q2", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%202/Q2/q2_merge_sort_variants.c"}, {"q": 3, "title": "Merging k Sorted Arrays", "tag": "k-Way Merge", "cx": "nk log k", "rank": 3, "cxmd": "Θ(nk²) vs Θ(nk log k)", "desc": "Accumulate sequentially, or merge in pairs until one array is left. Same <code>k−1</code> merges, different complexity class.", "plain": "Accumulate sequentially, or merge in pairs until one array is left. Same k−1 merges, different complexity class.", "plots": 5, "src": "q3_merge_k_sorted_arrays.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%202/Q3", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%202/Q3/q3_merge_k_sorted_arrays.c"}]}, {"n": 3, "lab": "Lab 03", "date": "11 Aug 2026", "folder": "WEEK 3", "topic": "Divide and conquer — search, matrix multiplication, loop invariants", "figs": "12 figures", "short": "divide & conquer · matrices · invariants", "questions": [{"q": 1, "title": "Binary Search vs Ternary Search", "tag": "Bin v Ternary", "cx": "2 log2 n", "rank": 1, "cxmd": "<code>2⌈log₂n⌉</code> vs <code>4⌈log₃n⌉</code> — both Θ(log n), ternary 26% dearer", "desc": "Search a sorted list by halves and by thirds, then settle which is better by counting comparisons rather than levels.", "plain": "Search a sorted list by halves and by thirds, then settle which is better by counting comparisons rather than levels.", "plots": 2, "src": "q1_binary_vs_ternary_search.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q1", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q1/q1_binary_vs_ternary_search.c"}, {"q": 2, "title": "Search the Defective Coin", "tag": "Light Coin", "cx": "log3 n + 1", "rank": 1, "cxmd": "<code>⌈log₃n⌉ + 1</code> weighings = Θ(log n)", "desc": "One coin of <code>n</code> may be lighter, or none is. Find it with nothing but a balance scale, inside <code>log₂ n + c</code> weighings.", "plain": "One coin of n may be lighter, or none is. Find it with nothing but a balance scale, inside log₂ n + c weighings.", "plots": 2, "src": "q2_defective_coin.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q2", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q2/q2_defective_coin.c"}, {"q": 3, "title": "Max and Min using Divide and Conquer", "tag": "Max and Min", "cx": "3n/2 - 2", "rank": 2, "cxmd": "<code>3n/2 − 2</code> comparisons, Θ(n) time", "desc": "Find both extremes of an array within the <code>3n/2</code> comparison bound, and check the recursion against its unrolled twin.", "plain": "Find both extremes of an array within the 3n/2 comparison bound, and check the recursion against its unrolled twin.", "plots": 2, "src": "q3_max_min_divide_conquer.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q3", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q3/q3_max_min_divide_conquer.c"}, {"q": 4, "title": "Matrix Multiplication using Strassen's Method", "tag": "Strassen", "cx": "n^2.807", "rank": 5, "cxmd": "Θ(n^log₂7) = Θ(n²·⁸⁰⁷)", "desc": "Seven half-size products instead of eight — and the eighteen block additions that buy them.", "plain": "Seven half-size products instead of eight — and the eighteen block additions that buy them.", "plots": 3, "src": "q4_strassen_matrix_multiply.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q4", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q4/q4_strassen_matrix_multiply.c"}, {"q": 5, "title": "Multiplying Special-Pattern Matrices", "tag": "Pattern Mtx", "cx": "n^2", "rank": 4, "cxmd": "Θ(n²) — exactly <code>3n² − 2n</code> operations", "desc": "Blocks that repeat recursively collapse eight products into two, so a 256×256 product costs 256 multiplications.", "plain": "Blocks that repeat recursively collapse eight products into two, so a 256×256 product costs 256 multiplications.", "plots": 2, "src": "q5_pattern_matrix_multiply.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q5", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q5/q5_pattern_matrix_multiply.c"}, {"q": 6, "title": "Selection Sort and Loop Invariants", "tag": "Selection Srt", "cx": "n^2", "rank": 4, "cxmd": "Θ(n²) in every case, <code>n−1</code> swaps", "desc": "State the invariant, discharge initialisation, maintenance and termination, then show best case = worst case by measurement.", "plain": "State the invariant, discharge initialisation, maintenance and termination, then show best case = worst case by measurement.", "plots": 1, "src": "q6_selection_sort_invariant.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q6", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q6/q6_selection_sort_invariant.c"}]}], "ranks": {"1": {"name": "log n", "color": "#34d399"}, "2": {"name": "n", "color": "#22d3ee"}, "3": {"name": "n log n", "color": "#60a5fa"}, "4": {"name": "n²", "color": "#facc15"}, "5": {"name": "n²·⁸⁰⁷", "color": "#fb923c"}, "6": {"name": "2ⁿ", "color": "#ef4444"}}, "repo": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments"};
+const QS = new URLSearchParams(location.search);
+
+/* ?still — skip the intro animation and the idle drift, so the view is
+   deterministic. Used for the README screenshots; also fine for a fixed link. */
+const STILL = QS.has("still");
+
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+/* Seeded, so anything decorative and random (lit windows, star fields) is the
+   same on every load — otherwise the screenshots would never reproduce. */
+function rng(seed) {
+  let s = (seed >>> 0) || 1;
+  return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0;
+                 return s / 4294967296; };
+}
+
+if (!window.THREE) { document.getElementById("fallback").classList.add("show"); }
+
+/* ══ renderer + scene ════════════════════════════════════════════════════ */
+const stage = document.getElementById("stage");
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
+} catch (e) {
+  document.getElementById("fallback").classList.add("show");
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const world = new THREE.Group();
+scene.add(world);
+
+const blocks = [];        // raycast targets, one per question
+const districts = [];     // one per lab session: {group, pts, solids, fades, dim, dimT}
+const worldPts = [];      // content hull, for exact framing
+
+/* ══ canvas-texture helpers ══════════════════════════════════════════════ */
+const FONT = 'ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif';
+
+function finish(canvas) {
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  if ("colorSpace" in tex) tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function labelTexture(text, opt) {
+  const o = Object.assign({size:64, weight:600, color:"#e2e8f0", track:0, font:FONT}, opt);
+  const c = document.createElement("canvas");
+  const ctx = c.getContext("2d");
+  const setFont = () => { ctx.font = o.weight + " " + o.size + "px " + o.font;
+                          ctx.textBaseline = "middle"; };
+  setFont();
+  const chars = [...text];
+  const w = ctx.measureText(text).width + o.track * chars.length;
+  c.width = Math.ceil(w + o.size * 0.5);
+  c.height = Math.ceil(o.size * 1.42);
+  setFont();
+  ctx.fillStyle = o.color;
+  let x = o.size * 0.25;
+  for (const ch of chars) {                       // manual letter tracking
+    ctx.fillText(ch, x, c.height/2);
+    x += ctx.measureText(ch).width + o.track;
+  }
+  return {tex: finish(c), aspect: c.width / c.height};
+}
+
+/** Flat decal lying on a horizontal surface. */
+function decal(text, opt, height) {
+  const {tex, aspect} = labelTexture(text, opt);
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(height * aspect, height),
+    new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false,
+                                 opacity:opt.opacity ?? 1}));
+  m.rotation.x = -Math.PI/2;
+  m.renderOrder = 3;
+  return m;
+}
+
+/** Upright panel of text, standing in the world (not a billboard). */
+function panel(text, opt, height) {
+  const {tex, aspect} = labelTexture(text, opt);
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(height * aspect, height),
+    new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false,
+                                 opacity:opt.opacity ?? 1,
+                                 blending:opt.additive ? THREE.AdditiveBlending
+                                                       : THREE.NormalBlending}));
+  m.renderOrder = 3;
+  return m;
+}
+
+/** Billboard that always faces the camera. */
+function billboard(text, opt, height) {
+  const {tex, aspect} = labelTexture(text, opt);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({
+    map:tex, transparent:true, depthWrite:false, opacity:opt.opacity ?? 1}));
+  s.scale.set(height * aspect, height, 1);
+  s.renderOrder = 4;
+  return s;
+}
+
+/** Soft radial blob — cheap stand-in for a glow, no post-processing needed. */
+function glowTexture(inner, outer) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const ctx = c.getContext("2d");
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, inner);
+  g.addColorStop(0.45, outer);
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  return finish(c);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y,     x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x,     y + h, r);
+  ctx.arcTo(x,     y + h, x,     y,     r);
+  ctx.arcTo(x,     y,     x + w, y,     r);
+  ctx.closePath();
+}
+
+/** Wrap `text` to `width` px in the current ctx font; returns the lines. */
+function wrap(ctx, text, width) {
+  const out = [];
+  let line = "";
+  for (const word of text.split(/\s+/)) {
+    const t = line ? line + " " + word : word;
+    if (ctx.measureText(t).width > width && line) { out.push(line); line = word; }
+    else line = t;
+  }
+  if (line) out.push(line);
+  return out;
+}
+
+/* ══ style: camera, lights, ground, view angles ══════════════════════════ */
+
+const AUTOSPIN = 0.038;                   // a slow drive-past
+const AIM_FRAC = 0.34;
+const ALL_PHI = 1.345, ALL_THETA = 0.34;  // low: a skyline wants to be seen edge-on
+const WK_PHI  = 1.395, WK_THETA  = 0.20;
+const ALL_SLACK = 1.03, WK_SLACK = 1.07;
+
+const camera = new THREE.PerspectiveCamera(44, innerWidth/innerHeight, 0.5, 900);
+
+const NIGHT = 0x05070f;
+scene.background = new THREE.Color(NIGHT);
+/* Heavy haze: it separates the districts in depth and gives the far towers the
+   fall-off that makes a city look big. */
+scene.fog = new THREE.Fog(NIGHT, 46, 265);
+
+scene.add(new THREE.HemisphereLight(0x1e3a6b, 0x02040a, 0.55));
+const moon = new THREE.DirectionalLight(0x9dc0ff, 0.55);
+moon.position.set(-42, 58, 30);
+moon.castShadow = true;
+moon.shadow.mapSize.set(2048, 2048);
+moon.shadow.camera.near = 10; moon.shadow.camera.far = 240;
+const S = 72;
+Object.assign(moon.shadow.camera, {left:-S, right:S, top:S, bottom:-S});
+moon.shadow.camera.updateProjectionMatrix();
+moon.shadow.bias = -0.0008;
+scene.add(moon);
+
+/* Asphalt. Dark enough that the emissive windows carry the whole image. */
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(720, 720),
+  new THREE.MeshStandardMaterial({color:0x090d18, roughness:0.55, metalness:0.35}));
+ground.rotation.x = -Math.PI/2;
+ground.position.y = -0.02;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const grid = new THREE.GridHelper(720, 180, 0x14203a, 0x0e1729);
+grid.material.transparent = true; grid.material.opacity = 0.55;
+scene.add(grid);
+
+/* Stars, seeded so the screenshots reproduce. */
+{
+  const r = rng(3141592);
+  const n = 700, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const rad = 250 + r() * 90, th = r() * Math.PI * 2, ph = r() * 0.62;
+    pos[i*3+0] = Math.cos(th) * Math.cos(ph) * rad;
+    pos[i*3+1] = Math.sin(ph) * rad + 30;
+    pos[i*3+2] = Math.sin(th) * Math.cos(ph) * rad;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    color:0xcfe0ff, size:1.05, sizeAttenuation:true, transparent:true,
+    opacity:0.75, depthWrite:false, fog:false,
+    blending:THREE.AdditiveBlending})));
+}
+
+const GLOW = glowTexture("rgba(255,255,255,.95)", "rgba(255,255,255,.30)");
+
+/* Lit windows, as an emissive map: white cells glow the tower's own colour,
+   black cells stay dark, so one canvas does all the work of a facade. */
+function windowTexture(cols, rows, seed) {
+  const px = 18;
+  const c = document.createElement("canvas");
+  c.width = cols * px; c.height = rows * px;
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = "#000"; ctx.fillRect(0, 0, c.width, c.height);
+  const r = rng(seed);
+  for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+    const v = r();
+    if (v < 0.34) continue;                        // an unlit office
+    ctx.fillStyle = "rgba(255,255,255," + (0.45 + v * 0.55).toFixed(3) + ")";
+    ctx.fillRect(x*px + 4, y*px + 5, px - 8, px - 10);
+  }
+  return finish(c);
+}
+
+
+/* ══ orbit controls (hand-rolled: no examples/ import needed) ════════════ */
+class Orbit {
+  constructor(cam, dom, target) {
+    this.cam = cam; this.dom = dom;
+    this.ortho = !!cam.isOrthographicCamera;
+    this.target = target.clone(); this.tTarget = target.clone();
+    this.sph = new THREE.Spherical(72, 1.12, 0.15);
+    this.tSph = this.sph.clone();
+    this.zoom = 1; this.tZoom = 1;
+    this.minR = 12; this.maxR = 320;
+    this.minPhi = 0.10; this.maxPhi = Math.PI * 0.492;
+    this.damp = 0.11;
+    this.autoRotate = !STILL && AUTOSPIN > 0; this.autoSpeed = AUTOSPIN;
+    this.drag = null; this.px = 0; this.py = 0; this.moved = 0;
+    this._bind();
+    this.apply(1);
+  }
+  _bind() {
+    const d = this.dom;
+    d.style.touchAction = "none";
+    d.addEventListener("pointerdown", e => {
+      d.setPointerCapture(e.pointerId);
+      this.drag = (e.button === 2 || e.shiftKey) ? "pan" : "orbit";
+      this.px = e.clientX; this.py = e.clientY; this.moved = 0;
+      this.autoRotate = false;
+    });
+    d.addEventListener("pointermove", e => {
+      const dx = e.clientX - this.px, dy = e.clientY - this.py;
+      this.px = e.clientX; this.py = e.clientY;
+      if (!this.drag) { hover(e); return; }
+      this.moved += Math.abs(dx) + Math.abs(dy);
+      if (this.drag === "orbit") {
+        this.tSph.theta -= dx * 0.0052;
+        this.tSph.phi = clamp(this.tSph.phi - dy * 0.0045, this.minPhi, this.maxPhi);
+      } else {
+        const k = (this.ortho ? 26 / this.zoom : this.tSph.radius) * 0.0016;
+        const right = new THREE.Vector3().setFromSpherical(
+          new THREE.Spherical(1, Math.PI/2, this.tSph.theta + Math.PI/2));
+        this.tTarget.addScaledVector(right, -dx * k);
+        this.tTarget.y = clamp(this.tTarget.y + dy * k, -6, 60);
+      }
+      hideTip();
+    });
+    const end = e => {
+      if (this.drag === "orbit" && this.moved < 5) click(e);
+      this.drag = null;
+      try { d.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    d.addEventListener("pointerup", end);
+    d.addEventListener("pointercancel", () => { this.drag = null; });
+    d.addEventListener("contextmenu", e => e.preventDefault());
+    d.addEventListener("wheel", e => {
+      e.preventDefault();
+      this.autoRotate = false;
+      const f = Math.exp(e.deltaY * 0.0011);
+      /* An orthographic camera has no useful distance, so the wheel drives
+         zoom instead — same gesture, same direction. */
+      if (this.ortho) this.tZoom = clamp(this.tZoom / f, 0.25, 9);
+      else this.tSph.radius = clamp(this.tSph.radius * f, this.minR, this.maxR);
+    }, {passive:false});
+  }
+  goto(v) {
+    this.tTarget.copy(v.aim);
+    if (v.radius !== undefined) this.tSph.radius = clamp(v.radius, this.minR, this.maxR);
+    if (v.zoom   !== undefined) this.tZoom = clamp(v.zoom, 0.25, 9);
+    if (v.phi    !== undefined) this.tSph.phi = clamp(v.phi, this.minPhi, this.maxPhi);
+    if (v.theta  !== undefined) this.tSph.theta = v.theta;
+    this.autoRotate = false;
+  }
+  apply(k) {
+    const s = this.sph, t = this.tSph;
+    s.radius += (t.radius - s.radius) * k;
+    s.phi    += (t.phi    - s.phi   ) * k;
+    s.theta  += (t.theta  - s.theta ) * k;
+    this.zoom += (this.tZoom - this.zoom) * k;
+    this.target.lerp(this.tTarget, k);
+    this.cam.position.setFromSpherical(s).add(this.target);
+    this.cam.lookAt(this.target);
+    if (this.ortho && Math.abs(this.cam.zoom - this.zoom) > 1e-4) {
+      this.cam.zoom = this.zoom;
+      this.cam.updateProjectionMatrix();
+    }
+  }
+  update(dt) {
+    if (this.autoRotate) this.tSph.theta += this.autoSpeed * dt;
+    this.apply(1 - Math.pow(1 - this.damp, dt * 60));
+  }
+}
+
+/* Exact framing: iterate until every content point projects inside the frustum.
+   Fitting the true hull rather than a bounding box matters — the box's empty top
+   corners would otherwise reserve a large part of the frame for nothing.
+
+   `minR` is a floor on the camera distance, for layouts that curve around the
+   orbit target: let the iteration start inside the content and the near objects
+   fall behind the camera, where project() returns nonsense and the fit collapses
+   toward zero instead of converging. */
+function fitView(pts, aim, phi, theta, slack, minR) {
+  const floor = minR ?? 0;
+  const probe = camera.clone();
+  const diag = new THREE.Box3().setFromPoints(pts).getSize(new THREE.Vector3()).length();
+  const measure = () => {
+    probe.lookAt(aim); probe.updateMatrixWorld(true);
+    let m = 0;
+    for (const p of pts) {
+      const q = p.clone().project(probe);
+      m = Math.max(m, Math.abs(q.x), Math.abs(q.y));
+    }
+    return m;
+  };
+  if (probe.isOrthographicCamera) {
+    probe.zoom = 1; probe.updateProjectionMatrix();
+    probe.position.setFromSpherical(new THREE.Spherical(diag * 2.5, phi, theta)).add(aim);
+    return {radius: diag * 2.5, zoom: 1 / (measure() * (slack ?? 1.04))};
+  }
+  let r = Math.max(diag, floor);
+  for (let i = 0; i < 9; i++) {
+    probe.position.setFromSpherical(new THREE.Spherical(r, phi, theta)).add(aim);
+    r = Math.max(floor, r * clamp(measure(), 0.3, 4));
+  }
+  return {radius: Math.max(floor, r * (slack ?? 1.04))};
+}
+
+/* Aim below the vertical middle: the content reads better sitting low. */
+function aimFor(pts, frac) {
+  const b = new THREE.Box3().setFromPoints(pts);
+  const c = b.getCenter(new THREE.Vector3());
+  c.y = b.min.y + (b.max.y - b.min.y) * (frac ?? AIM_FRAC);
+  return c;
+}
+
+/* ══ style: build the scene from the data ════════════════════════════════ */
+
+const FOOT = 2.55, PITCH = 4.75;
+const H0 = 3.8, HSTEP = 4.15;             // tower height = H0 + rank*HSTEP
+const PAD = 3.2, FRONT = 4.2, ROAD = 9.0;
+
+const towerGeo = new THREE.BoxGeometry(1, 1, 1);
+towerGeo.translate(0, 0.5, 0);            // pivot at the pavement
+
+const PD = PITCH + PAD + FRONT;
+const widths = DATA.weeks.map(w => w.questions.length * PITCH + PAD);
+const zSpan = DATA.weeks.length * PD + (DATA.weeks.length - 1) * ROAD;
+const cityWidth = Math.max(...widths);
+
+DATA.weeks.forEach((wk, wi) => {
+  const pw = widths[wi], pd = PD;
+  /* City blocks in a row, oldest at the back — Week 1 owns the tallest tower,
+     so from the front it screens nothing. */
+  const zc = -zSpan/2 + PD/2 + wi * (PD + ROAD);
+
+  const g = new THREE.Group();
+  g.position.set(0, 0, zc - FRONT/2);
+  world.add(g);
+
+  const pts = [], solids = [], fades = [], lights = [];
+  for (const sx of [-1, 1]) for (const sz of [-1, 1])
+    pts.push(new THREE.Vector3(sx*pw/2, 0, zc + sz*pd/2));
+
+  /* Pavement, a shade above the road so the block edge catches the moon. */
+  const pave = new THREE.Mesh(new THREE.BoxGeometry(pw, 0.34, pd),
+    new THREE.MeshStandardMaterial({color:0x111a2e, roughness:0.7, metalness:0.2}));
+  pave.position.set(0, 0.17, FRONT/2);
+  pave.receiveShadow = true;
+  g.add(pave);
+  solids.push({mat: pave.material, base: pave.material.color.clone()});
+
+  const kerb = new THREE.LineSegments(new THREE.EdgesGeometry(pave.geometry),
+    new THREE.LineBasicMaterial({color:0x3d5680, transparent:true, opacity:0.7}));
+  kerb.position.copy(pave.position);
+  g.add(kerb);
+  fades.push({mat: kerb.material, base: 0.7});
+
+  /* Light pollution: the sodium wash a block throws onto its own street. */
+  const wash = new THREE.Mesh(new THREE.PlaneGeometry(pw * 1.9, pd * 2.5),
+    new THREE.MeshBasicMaterial({map: GLOW, color: 0x2a4a86, transparent: true,
+      opacity: 0.32, depthWrite: false, blending: THREE.AdditiveBlending}));
+  wash.rotation.x = -Math.PI/2;
+  wash.position.set(0, 0.04, FRONT/2);
+  g.add(wash);
+  fades.push({mat: wash.material, base: 0.32});
+
+  /* District sign, standing upright at the kerb like real signage. */
+  const sign = panel(wk.folder.toUpperCase() + "  ·  " + wk.lab.toUpperCase(),
+                     {size:64, weight:700, color:"#bcd6ff", track:6, additive:true}, 1.15);
+  sign.position.set(0, 1.62, pd/2 + FRONT/2 - 0.6);
+  g.add(sign);
+  const sub = panel(wk.date + "  ·  " + wk.questions.length + " questions  ·  " + wk.figs,
+                    {size:56, weight:500, color:"#6d88ad", additive:true}, 0.7);
+  sub.position.set(0, 0.88, pd/2 + FRONT/2 - 0.6);
+  g.add(sub);
+  fades.push({mat: sign.material, base: 1}, {mat: sub.material, base: 1});
+
+  wk.questions.forEach((q, i) => {
+    const n = wk.questions.length;
+    const x = (i - (n-1)/2) * PITCH;
+    const h = H0 + q.rank * HSTEP;
+    const col = new THREE.Color(DATA.ranks[q.rank].color);
+    const rows = Math.max(3, Math.round(h / 1.45));
+
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0x0c1322, roughness: 0.62, metalness: 0.28,
+      emissive: col, emissiveIntensity: 1,
+      emissiveMap: windowTexture(4, rows, 9176 + wi * 101 + i * 17)});
+    const t = new THREE.Mesh(towerGeo, mat);
+    t.position.set(x, 0.34, 0);
+    t.scale.set(FOOT, h, FOOT);
+    t.castShadow = true; t.receiveShadow = true;
+    t.userData = {q, wk, di: wi, h, base: col, mat,
+                  delay: wi * 0.18 + i * 0.075, phase: (wi * 3 + i) * 1.7};
+    g.add(t);
+    blocks.push(t);
+    lights.push(mat);
+
+    /* Roof beacon — and for the two dearest classes, the mast to hang it on. */
+    const beacon = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: GLOW, color: col, transparent: true, opacity: 0.9,
+      depthWrite: false, blending: THREE.AdditiveBlending, fog: false}));
+    beacon.scale.setScalar(2.5);
+    g.add(beacon);
+    t.userData.beacon = beacon;
+
+    if (q.rank >= 5) {
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.1, 6),
+        new THREE.MeshBasicMaterial({color: 0x64748b}));
+      g.add(mast);
+      t.userData.mast = mast;
+      fades.push({mat: mast.material, base: 1});
+    }
+
+    const tag = billboard(q.tag, {size:56, weight:600, color:"#d5e3f7"}, 0.78);
+    g.add(tag);
+    t.userData.tag = tag;
+
+    const num = billboard("Q" + q.q, {size:64, weight:700,
+      color: DATA.ranks[q.rank].color}, 0.92);
+    g.add(num);
+    t.userData.num = num;
+
+    for (const sx of [-1, 1]) for (const sz of [-1, 1])
+      pts.push(new THREE.Vector3(x + sx*FOOT/2, h + (q.rank >= 5 ? 5.2 : 3.5),
+                                 zc - FRONT/2 + sz*FOOT/2));
+  });
+
+  worldPts.push(...pts);
+  districts.push({group:g, pw, pd, zc, wk, pts, solids, fades, lights,
+                  dim:0, dimT:0});
+});
+
+/* Filler blocks: fifteen towers alone are not a city. These carry no data and
+   take no clicks — they are the rest of town, so the skyline has a horizon to
+   stand on. Held well clear of the lit blocks, and shorter the nearer they are,
+   because the one thing filler must never do is stand in front of a question. */
+{
+  const r = rng(777001);
+  const filler = new THREE.Group();
+  world.add(filler);
+  for (let i = 0; i < 210; i++) {
+    const side = r() < 0.5 ? -1 : 1;
+    const far = r();                                 // 0 = near the city, 1 = far out
+    const x = side * (cityWidth/2 + 21 + far * 115);
+    const z = (r() - 0.5) * (zSpan + 170);
+    const h = 1.6 + Math.pow(r(), 2.2) * (5 + far * 21);
+    const w = 1.7 + r() * 3.6, d = 1.7 + r() * 3.6;
+    const lit = r() < 0.5;
+    const m = new THREE.Mesh(towerGeo, new THREE.MeshStandardMaterial({
+      color: 0x0a1020, roughness: 0.8, metalness: 0.15,
+      emissive: new THREE.Color(lit ? 0x3f5f96 : 0x101a2c),
+      emissiveIntensity: lit ? 0.55 : 0.2,
+      emissiveMap: lit ? windowTexture(3, Math.max(2, Math.round(h/1.5)),
+                                       31 + i * 7) : null}));
+    m.position.set(x, 0, z);
+    m.scale.set(w, h, d);
+    filler.add(m);
+  }
+}
+
+document.getElementById("stat-q").textContent =
+  DATA.weeks.reduce((a,w)=>a+w.questions.length, 0);
+
+
+document.getElementById("stat-w").textContent = DATA.weeks.length;
+
+/* ══ view + controls ═════════════════════════════════════════════════════ */
+/* A style may define styleView(key) to override framing; otherwise the whole
+   hull is framed for "all" and one district's hull for a week. */
+function viewFor(key) {
+  if (typeof styleView === "function") {
+    const v = styleView(key);
+    if (v) return v;
+  }
+  if (key === "all") {
+    const aim = aimFor(worldPts);
+    return Object.assign({aim}, fitView(worldPts, aim, ALL_PHI, ALL_THETA, ALL_SLACK),
+                         {phi: ALL_PHI, theta: ALL_THETA});
+  }
+  const pts = districts[key].pts;
+  const aim = aimFor(pts);
+  return Object.assign({aim}, fitView(pts, aim, WK_PHI, WK_THETA, WK_SLACK),
+                       {phi: WK_PHI, theta: WK_THETA});
+}
+
+const controls = new Orbit(camera, renderer.domElement, aimFor(worldPts));
+{
+  const v = viewFor("all");
+  controls.goto(v);
+  controls.sph.copy(controls.tSph);
+  controls.zoom = controls.tZoom;
+  controls.target.copy(controls.tTarget);
+  controls.autoRotate = !STILL && AUTOSPIN > 0;
+  controls.apply(1);
+}
+/* A style may constrain the controls once they exist — locking the elevation
+   for an isometric view, say. */
+if (typeof stylePost === "function") stylePost();
+
+/* ══ hover + click ═══════════════════════════════════════════════════════ */
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const tip = document.getElementById("tip");
+let hot = null;
+
+function pick(e) {
+  ndc.x = (e.clientX / innerWidth) * 2 - 1;
+  ndc.y = -(e.clientY / innerHeight) * 2 + 1;
+  ray.setFromCamera(ndc, camera);
+  const live = blocks.filter(b => districts[b.userData.di].dim < 0.35);
+  return ray.intersectObjects(live, false)[0]?.object ?? null;
+}
+function hideTip() { tip.style.opacity = 0; }
+
+function hover(e) {
+  const m = pick(e);
+  if (m !== hot) {
+    if (hot) hot.userData.hot = false;
+    hot = m;
+    if (hot) hot.userData.hot = true;
+    renderer.domElement.style.cursor = hot ? "pointer" : "grab";
+  }
+  if (!hot) { hideTip(); return; }
+  const {q, wk} = hot.userData;
+  tip.querySelector(".eyebrow").textContent =
+    wk.folder + " · " + wk.lab + " · Question " + q.q;
+  tip.querySelector("h3").textContent = q.title;
+  tip.querySelector(".cx").innerHTML = q.cxmd;
+  tip.querySelector(".desc").innerHTML = q.desc;
+  tip.querySelector(".go").innerHTML =
+    "click to open <code>" + q.src + "</code>" +
+    (q.plots ? " &nbsp;·&nbsp; " + q.plots + " plot" + (q.plots>1?"s":"") : "");
+  tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  tip.style.left = clamp(e.clientX + 18, 8, innerWidth  - r.width  - 8) + "px";
+  tip.style.top  = clamp(e.clientY + 18, 8, innerHeight - r.height - 8) + "px";
+}
+
+function click(e) {
+  const m = pick(e);
+  if (m) window.open(m.userData.q.url, "_blank", "noopener");
+}
+
+/* ══ focus ═══════════════════════════════════════════════════════════════ */
+const navBtns = [...document.querySelectorAll("#nav button")];
+let view = "all";
+function focusOn(key) {
+  view = key;
+  navBtns.forEach(b => b.classList.toggle("on", b.dataset.focus === String(key)));
+  /* Dim the sessions you are not looking at: whatever sits between the camera
+     and the subject would otherwise loom across the foreground. */
+  districts.forEach((d, i) => d.dimT = (key === "all" || i === key) ? 0 : 1);
+  controls.goto(viewFor(key));
+  hideTip();
+}
+navBtns.forEach(b => b.addEventListener("click", () => focusOn(
+  b.dataset.focus === "all" ? "all" : +b.dataset.focus)));
+addEventListener("keydown", e => {
+  if (e.key === "0") { focusOn("all"); return; }
+  const n = +e.key;
+  if (n >= 1 && n <= districts.length) focusOn(n - 1);
+  if (typeof styleKey === "function") styleKey(e);
+});
+
+/* ?week=3 opens straight to that lab session. */
+const wantWeek = +QS.get("week");
+if (wantWeek >= 1 && wantWeek <= districts.length) {
+  focusOn(wantWeek - 1);
+  controls.apply(1);                    // snap, don't glide, on first paint
+  if (STILL) districts.forEach(d => d.dim = d.dimT);
+}
+
+/* ══ loop ════════════════════════════════════════════════════════════════ */
+const clock = new THREE.Clock();
+let elapsed = 0;
+const BG = scene.background.isColor ? scene.background : new THREE.Color(0x0b1120);
+
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  elapsed += dt;
+  const k = 1 - Math.pow(0.004, dt);
+
+  /* per-district dimming — colour-faded toward the background rather than
+     alpha, so depth sorting and shadows are left alone */
+  for (const d of districts) {
+    d.dim += (d.dimT - d.dim) * k;
+    const o = 1 - d.dim * 0.92;
+    for (const s of d.solids) s.mat.color.copy(s.base).lerp(BG, d.dim * 0.92);
+    for (const f of d.fades) f.mat.opacity = f.base * o;
+    /* once faded into the background, drop it entirely: framing a back row
+       leaves a front row between camera and subject, where even a ghost is a
+       nuisance */
+    d.group.visible = d.dim < 0.9;
+  }
+
+
+  /* Floating labels are noise across a whole city; bring them in as you close. */
+  const tagFade = clamp((150 - controls.sph.radius) / 45, 0, 1);
+
+  for (const t of blocks) {
+    const u = t.userData;
+    const dim = districts[u.di].dim;
+    const vis = 1 - dim * 0.92;
+    /* The city builds itself, back row first. */
+    const g = STILL ? 1 : easeOut(clamp((elapsed - 0.25 - u.delay) / 0.75, 0, 1));
+    const hh = Math.max(0.0001, u.h * g);
+    t.scale.y = hh;
+    const top = 0.34 + hh;
+
+    u.beacon.position.set(t.position.x, top + 0.5 + (u.mast ? 3.0 : 0), 0);
+    /* Aircraft-warning blink, out of step between towers. */
+    u.beacon.material.opacity =
+      (0.45 + 0.55 * Math.abs(Math.sin(elapsed * 1.25 + u.phase)))
+      * (u.hot ? 1 : 0.72) * vis * g;
+    u.beacon.scale.setScalar((u.hot ? 3.6 : 2.5) * g);
+    if (u.mast) u.mast.position.set(t.position.x, top + 1.55, 0);
+
+    u.num.position.set(t.position.x, 1.25, 2.5);
+    u.num.material.opacity = 0.9 * vis * g * (1 - dim);
+    u.num.visible = u.num.material.opacity > 0.02;
+
+    u.tag.position.set(t.position.x, top + 1.5, 0);
+    u.tag.material.opacity = tagFade * (u.hot ? 1 : 0.8) * vis * g * (1 - dim);
+    u.tag.visible = u.tag.material.opacity > 0.02;
+
+    /* Hovering turns the lights up rather than changing the colour: the colour
+       is data. */
+    u.mat.emissiveIntensity += ((u.hot ? 2.4 : 1.0) * vis - u.mat.emissiveIntensity) * k;
+    u.mat.color.lerp(new THREE.Color(u.hot ? 0x1b2b48 : 0x0c1322), k);
+  }
+
+
+  controls.update(dt);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+frame();
+
+addEventListener("resize", () => {
+  if (camera.isOrthographicCamera) {
+    const h = 26, w = h * innerWidth / innerHeight;
+    Object.assign(camera, {left:-w, right:w, top:h, bottom:-h});
+  } else {
+    camera.aspect = innerWidth / innerHeight;
+  }
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  focusOn(view);                        // reframe: the fit depends on aspect
+});
+renderer.domElement.style.cursor = "grab";
+
+/* ══ legend ══════════════════════════════════════════════════════════════ */
+
+const list = document.getElementById("legend-list");
+Object.keys(DATA.ranks).sort((a,b)=>b-a).forEach(r => {
+  const {name, color} = DATA.ranks[r];
+  const li = document.createElement("li");
+  /* A silhouette per class: the legend is itself a small skyline. */
+  li.innerHTML =
+    '<span style="display:flex;align-items:flex-end;width:34px;height:20px">' +
+    '<i style="background:' + color + ';width:9px;border-radius:2px 2px 0 0;height:' +
+    (3 + r * 2.8).toFixed(1) + 'px;box-shadow:0 0 9px ' + color + '"></i></span>' +
+    '<span>' + name + '</span>';
+  list.appendChild(li);
+});
+
+</script>
+</body>
+</html>

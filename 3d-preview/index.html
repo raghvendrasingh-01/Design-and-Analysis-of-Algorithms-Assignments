@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DAA Lab Map — Cards</title>
+<style>
+  :root{
+    --bg:#0b1120; --panel:rgba(15,23,42,.82); --line:rgba(148,163,184,.22);
+    --fg:#e2e8f0; --dim:#94a3b8; --accent:#38bdf8;
+    --bg:#070b16;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);
+    font:14px/1.5 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  canvas{display:block;outline:none}
+  #stage{position:fixed;inset:0}
+  a{color:var(--accent)}
+
+  .panel{position:fixed;background:var(--panel);border:1px solid var(--line);
+    border-radius:14px;padding:14px 16px;backdrop-filter:blur(12px);
+    box-shadow:0 12px 40px rgba(0,0,0,.45);z-index:5}
+
+  #title{top:18px;left:18px;max-width:340px}
+  #title h1{margin:0;font-size:17px;font-weight:650;letter-spacing:-.01em}
+  #title p{margin:5px 0 0;font-size:12.5px;color:var(--dim)}
+  #title .sub{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--dim)}
+  #title b{color:var(--fg);font-weight:600}
+
+  #nav{top:18px;right:18px;display:flex;gap:6px;padding:8px}
+  #nav button{font:inherit;font-size:12.5px;color:var(--dim);background:transparent;
+    border:1px solid var(--line);border-radius:9px;padding:7px 11px;cursor:pointer;
+    transition:.16s}
+  #nav button:hover{color:var(--fg);border-color:rgba(56,189,248,.55);
+    background:rgba(56,189,248,.10)}
+  #nav button.on{color:#0b1120;background:var(--accent);border-color:var(--accent);
+    font-weight:600}
+
+  /* style switcher — the four variants are the same data, so let people flip */
+  #styles{top:18px;left:50%;transform:translateX(-50%);display:flex;
+    align-items:center;gap:4px;padding:7px 9px}
+  #styles em{font-style:normal;font-size:10.5px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--dim);margin-right:4px}
+  #styles a{font-size:12px;color:var(--dim);text-decoration:none;padding:5px 9px;
+    border-radius:8px;transition:.16s}
+  #styles a:hover{color:var(--fg);background:rgba(148,163,184,.13)}
+  #styles a.on{color:var(--fg);background:rgba(56,189,248,.18);
+    box-shadow:inset 0 0 0 1px rgba(56,189,248,.45);font-weight:600}
+
+  #legend{bottom:18px;left:18px;padding:13px 16px}
+  #legend h2{margin:0 0 3px;font-size:11px;font-weight:650;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--dim)}
+  #legend .note{margin:0 0 9px;font-size:11px;color:var(--dim);opacity:.85}
+  #legend ul{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+  #legend li{display:flex;align-items:center;gap:9px;font-size:12px}
+  #legend i{width:11px;border-radius:3px;flex:none;display:block}
+  #legend span{color:var(--dim);font-variant-numeric:tabular-nums}
+
+  #hint{bottom:18px;right:18px;font-size:11.5px;color:var(--dim);padding:11px 14px;
+    max-width:260px}
+  #hint kbd{font:inherit;font-size:10.5px;background:rgba(148,163,184,.16);
+    border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--fg)}
+  #hint div+div{margin-top:5px}
+
+  #tip{position:fixed;z-index:20;pointer-events:none;opacity:0;max-width:330px;
+    background:rgba(2,6,23,.94);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;box-shadow:0 16px 44px rgba(0,0,0,.6);
+    transition:opacity .13s;backdrop-filter:blur(10px)}
+  #tip .eyebrow{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--dim);margin-bottom:3px}
+  #tip h3{margin:0 0 6px;font-size:14px;font-weight:640;line-height:1.3}
+  #tip .cx{font-size:11.5px;margin-bottom:7px;color:#cbd5e1}
+  #tip .desc{font-size:12px;color:var(--dim);margin:0 0 9px}
+  #tip .go{font-size:11px;color:var(--accent);border-top:1px solid var(--line);
+    padding-top:7px}
+  #tip code{background:rgba(148,163,184,.15);border-radius:4px;padding:0 3px;
+    font-size:.92em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+
+  #fallback{position:fixed;inset:0;display:none;place-content:center;text-align:center;
+    padding:40px;z-index:99;background:var(--bg)}
+  #fallback.show{display:grid}
+
+  @media (max-width:980px){ #styles{display:none} }
+  @media (max-width:820px){
+    #legend,#hint{display:none}
+    #title{max-width:none;right:18px}
+    #nav{top:auto;bottom:18px;left:18px;right:18px;justify-content:center}
+  }
+
+</style>
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="title" class="panel">
+  <h1>Design &amp; Analysis of Algorithms</h1>
+  <p>Every question printed on its own card. <b>The header band is its complexity class</b>, and the meter counts it out.</p>
+  <div class="sub"><b id="stat-q">–</b> questions across <b id="stat-w">–</b> lab
+     sessions · click any card to open it on GitHub</div>
+</div>
+
+<div id="styles" class="panel"><em>style</em><a href="index.html" class="on">Cards</a><a href="districts.html">Districts</a><a href="iso.html">Isometric</a><a href="skyline.html">Skyline</a></div>
+
+<div id="nav" class="panel">
+  <button data-focus="all" class="on">All</button>
+  <button data-focus="0">Week 1</button>
+  <button data-focus="1">Week 2</button>
+  <button data-focus="2">Week 3</button>
+</div>
+
+<div id="legend" class="panel">
+  <h2>Header band</h2>
+  <p class="note">cheap at the bottom, expensive at the top</p>
+  <ul id="legend-list"></ul>
+</div>
+
+<div id="hint" class="panel">
+  <div><kbd>drag</kbd> spin the column &nbsp; <kbd>scroll</kbd> zoom</div>
+  <div><kbd>right-drag</kbd> pan &nbsp; <kbd>click</kbd> open</div>
+  <div><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> jump to a ring &nbsp; <kbd>0</kbd> reset</div>
+</div>
+
+<div id="tip">
+  <div class="eyebrow"></div><h3></h3>
+  <div class="cx"></div><p class="desc"></p><div class="go"></div>
+</div>
+
+<div id="fallback">
+  <div>
+    <h1 style="font-size:19px">WebGL is unavailable</h1>
+    <p style="color:#94a3b8;max-width:420px">This map needs hardware-accelerated
+    WebGL. Try a different browser, or read the flat lab index in the repository
+    README instead.</p>
+  </div>
+</div>
+
+<script src="three.min.js"></script>
+<!-- vendored locally so the page works offline; CDN only if that copy is missing -->
+<script>window.THREE||document.write('<scr'+'ipt src="https://unpkg.com/three@0.155.0/build/three.min.js"><\/scr'+'ipt>')</script>
+<script>
+"use strict";
+const DATA = {"weeks": [{"n": 1, "lab": "Lab 01", "date": "28 Jul 2026", "folder": "WEEK 1", "topic": "Growth of functions, empirical analysis, recurrences", "figs": "10 figures", "short": "growth · simulation · recurrences", "questions": [{"q": 1, "title": "Put Them in Order", "tag": "Growth Order", "cx": "TF^2 + T^2F", "rank": 4, "cxmd": "Θ(T·F² + T²·F) time, Θ(F·T) space", "desc": "Arrange 12 given functions in increasing order of growth for sufficiently large <code>n</code>.", "plain": "Arrange 12 given functions in increasing order of growth for sufficiently large n.", "plots": 7, "src": "q1_growth_order.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q1", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q1/q1_growth_order.c"}, {"q": 2, "title": "Fair vs Biased Coin", "tag": "Coin Toss", "cx": "n", "rank": 2, "cxmd": "Θ(n) time, Θ(1) space", "desc": "Simulate a coin toss, verify that P(HEAD) → 0.5, then compare a fair coin against biased ones.", "plain": "Simulate a coin toss, verify that P(HEAD) → 0.5, then compare a fair coin against biased ones.", "plots": 0, "src": "q2_coin_toss.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q2", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q2/q2_coin_toss.c"}, {"q": 3, "title": "Bubble Sort Performance", "tag": "Bubble Sort", "cx": "n^2", "rank": 4, "cxmd": "Ω(n) / O(n²) time, Θ(1) space", "desc": "Compare a bubble sort that stops early once sorted against one that always runs all <code>n−1</code> passes.", "plain": "Compare a bubble sort that stops early once sorted against one that always runs all n−1 passes.", "plots": 0, "src": "q3_bubble_sort_performance_analysis.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q3", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q3/q3_bubble_sort_performance_analysis.c"}, {"q": 4, "title": "Towers of Hanoi", "tag": "Hanoi", "cx": "2^n", "rank": 6, "cxmd": "Θ(2ⁿ) time, Θ(n) space", "desc": "Simulate the puzzle, tabulate moves for <code>n</code> discs, and match against the closed form.", "plain": "Simulate the puzzle, tabulate moves for n discs, and match against the closed form.", "plots": 0, "src": "q4_towers_of_hanoi.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q4", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q4/q4_towers_of_hanoi.c"}, {"q": 5, "title": "Find the Partition Point", "tag": "Partition Pt", "cx": "log n", "rank": 1, "cxmd": "Θ(log n) time, Θ(1) space", "desc": "Given an array of 0s followed by 1s, locate the exact transition index.", "plain": "Given an array of 0s followed by 1s, locate the exact transition index.", "plots": 0, "src": "q5_partition_point.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q5", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q5/q5_partition_point.c"}, {"q": 6, "title": "Element Uniqueness", "tag": "Uniqueness", "cx": "n^2", "rank": 4, "cxmd": "O(n²) time, Θ(1) space", "desc": "Check whether <code>n</code> given numbers are all distinct, and reason about the cost for large <code>n</code>.", "plain": "Check whether n given numbers are all distinct, and reason about the cost for large n.", "plots": 0, "src": "q6_element_uniqueness.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%201/Q6", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%201/Q6/q6_element_uniqueness.c"}]}, {"n": 2, "lab": "Lab 02", "date": "04 Aug 2026", "folder": "WEEK 2", "topic": "Data structure trade-offs, divide and conquer, the master theorem", "figs": "15 figures", "short": "data structures · splitting k ways", "questions": [{"q": 1, "title": "Dictionary Operations", "tag": "Dictionary", "cx": "1 .. n", "rank": 2, "cxmd": "Θ(1) to Θ(n) per operation", "desc": "Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm.", "plain": "Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm.", "plots": 6, "src": "q1_dictionary_operations.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%202/Q1", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%202/Q1/q1_dictionary_operations.c"}, {"q": 2, "title": "Merge Sort vs Three-Way Merge Sort", "tag": "Merge Sort x3", "cx": "n log n", "rank": 3, "cxmd": "Θ(n log₃n) = Θ(n log n)", "desc": "Split into thirds instead of halves and find the worst-case running time — then show what the base of the logarithm costs.", "plain": "Split into thirds instead of halves and find the worst-case running time — then show what the base of the logarithm costs.", "plots": 4, "src": "q2_merge_sort_variants.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%202/Q2", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%202/Q2/q2_merge_sort_variants.c"}, {"q": 3, "title": "Merging k Sorted Arrays", "tag": "k-Way Merge", "cx": "nk log k", "rank": 3, "cxmd": "Θ(nk²) vs Θ(nk log k)", "desc": "Accumulate sequentially, or merge in pairs until one array is left. Same <code>k−1</code> merges, different complexity class.", "plain": "Accumulate sequentially, or merge in pairs until one array is left. Same k−1 merges, different complexity class.", "plots": 5, "src": "q3_merge_k_sorted_arrays.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%202/Q3", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%202/Q3/q3_merge_k_sorted_arrays.c"}]}, {"n": 3, "lab": "Lab 03", "date": "11 Aug 2026", "folder": "WEEK 3", "topic": "Divide and conquer — search, matrix multiplication, loop invariants", "figs": "12 figures", "short": "divide & conquer · matrices · invariants", "questions": [{"q": 1, "title": "Binary Search vs Ternary Search", "tag": "Bin v Ternary", "cx": "2 log2 n", "rank": 1, "cxmd": "<code>2⌈log₂n⌉</code> vs <code>4⌈log₃n⌉</code> — both Θ(log n), ternary 26% dearer", "desc": "Search a sorted list by halves and by thirds, then settle which is better by counting comparisons rather than levels.", "plain": "Search a sorted list by halves and by thirds, then settle which is better by counting comparisons rather than levels.", "plots": 2, "src": "q1_binary_vs_ternary_search.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q1", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q1/q1_binary_vs_ternary_search.c"}, {"q": 2, "title": "Search the Defective Coin", "tag": "Light Coin", "cx": "log3 n + 1", "rank": 1, "cxmd": "<code>⌈log₃n⌉ + 1</code> weighings = Θ(log n)", "desc": "One coin of <code>n</code> may be lighter, or none is. Find it with nothing but a balance scale, inside <code>log₂ n + c</code> weighings.", "plain": "One coin of n may be lighter, or none is. Find it with nothing but a balance scale, inside log₂ n + c weighings.", "plots": 2, "src": "q2_defective_coin.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q2", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q2/q2_defective_coin.c"}, {"q": 3, "title": "Max and Min using Divide and Conquer", "tag": "Max and Min", "cx": "3n/2 - 2", "rank": 2, "cxmd": "<code>3n/2 − 2</code> comparisons, Θ(n) time", "desc": "Find both extremes of an array within the <code>3n/2</code> comparison bound, and check the recursion against its unrolled twin.", "plain": "Find both extremes of an array within the 3n/2 comparison bound, and check the recursion against its unrolled twin.", "plots": 2, "src": "q3_max_min_divide_conquer.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q3", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q3/q3_max_min_divide_conquer.c"}, {"q": 4, "title": "Matrix Multiplication using Strassen's Method", "tag": "Strassen", "cx": "n^2.807", "rank": 5, "cxmd": "Θ(n^log₂7) = Θ(n²·⁸⁰⁷)", "desc": "Seven half-size products instead of eight — and the eighteen block additions that buy them.", "plain": "Seven half-size products instead of eight — and the eighteen block additions that buy them.", "plots": 3, "src": "q4_strassen_matrix_multiply.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q4", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q4/q4_strassen_matrix_multiply.c"}, {"q": 5, "title": "Multiplying Special-Pattern Matrices", "tag": "Pattern Mtx", "cx": "n^2", "rank": 4, "cxmd": "Θ(n²) — exactly <code>3n² − 2n</code> operations", "desc": "Blocks that repeat recursively collapse eight products into two, so a 256×256 product costs 256 multiplications.", "plain": "Blocks that repeat recursively collapse eight products into two, so a 256×256 product costs 256 multiplications.", "plots": 2, "src": "q5_pattern_matrix_multiply.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q5", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q5/q5_pattern_matrix_multiply.c"}, {"q": 6, "title": "Selection Sort and Loop Invariants", "tag": "Selection Srt", "cx": "n^2", "rank": 4, "cxmd": "Θ(n²) in every case, <code>n−1</code> swaps", "desc": "State the invariant, discharge initialisation, maintenance and termination, then show best case = worst case by measurement.", "plain": "State the invariant, discharge initialisation, maintenance and termination, then show best case = worst case by measurement.", "plots": 1, "src": "q6_selection_sort_invariant.c", "url": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/tree/main/WEEK%203/Q6", "code": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/blob/main/WEEK%203/Q6/q6_selection_sort_invariant.c"}]}], "ranks": {"1": {"name": "log n", "color": "#34d399"}, "2": {"name": "n", "color": "#22d3ee"}, "3": {"name": "n log n", "color": "#60a5fa"}, "4": {"name": "n²", "color": "#facc15"}, "5": {"name": "n²·⁸⁰⁷", "color": "#fb923c"}, "6": {"name": "2ⁿ", "color": "#ef4444"}}, "repo": "https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments"};
+const QS = new URLSearchParams(location.search);
+
+/* ?still — skip the intro animation and the idle drift, so the view is
+   deterministic. Used for the README screenshots; also fine for a fixed link. */
+const STILL = QS.has("still");
+
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+
+/* Seeded, so anything decorative and random (lit windows, star fields) is the
+   same on every load — otherwise the screenshots would never reproduce. */
+function rng(seed) {
+  let s = (seed >>> 0) || 1;
+  return () => { s ^= s << 13; s >>>= 0; s ^= s >> 17; s ^= s << 5; s >>>= 0;
+                 return s / 4294967296; };
+}
+
+if (!window.THREE) { document.getElementById("fallback").classList.add("show"); }
+
+/* ══ renderer + scene ════════════════════════════════════════════════════ */
+const stage = document.getElementById("stage");
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
+} catch (e) {
+  document.getElementById("fallback").classList.add("show");
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+if ("outputColorSpace" in renderer) renderer.outputColorSpace = THREE.SRGBColorSpace;
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const world = new THREE.Group();
+scene.add(world);
+
+const blocks = [];        // raycast targets, one per question
+const districts = [];     // one per lab session: {group, pts, solids, fades, dim, dimT}
+const worldPts = [];      // content hull, for exact framing
+
+/* ══ canvas-texture helpers ══════════════════════════════════════════════ */
+const FONT = 'ui-sans-serif,system-ui,"Segoe UI",Roboto,sans-serif';
+
+function finish(canvas) {
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  if ("colorSpace" in tex) tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  return tex;
+}
+
+function labelTexture(text, opt) {
+  const o = Object.assign({size:64, weight:600, color:"#e2e8f0", track:0, font:FONT}, opt);
+  const c = document.createElement("canvas");
+  const ctx = c.getContext("2d");
+  const setFont = () => { ctx.font = o.weight + " " + o.size + "px " + o.font;
+                          ctx.textBaseline = "middle"; };
+  setFont();
+  const chars = [...text];
+  const w = ctx.measureText(text).width + o.track * chars.length;
+  c.width = Math.ceil(w + o.size * 0.5);
+  c.height = Math.ceil(o.size * 1.42);
+  setFont();
+  ctx.fillStyle = o.color;
+  let x = o.size * 0.25;
+  for (const ch of chars) {                       // manual letter tracking
+    ctx.fillText(ch, x, c.height/2);
+    x += ctx.measureText(ch).width + o.track;
+  }
+  return {tex: finish(c), aspect: c.width / c.height};
+}
+
+/** Flat decal lying on a horizontal surface. */
+function decal(text, opt, height) {
+  const {tex, aspect} = labelTexture(text, opt);
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(height * aspect, height),
+    new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false,
+                                 opacity:opt.opacity ?? 1}));
+  m.rotation.x = -Math.PI/2;
+  m.renderOrder = 3;
+  return m;
+}
+
+/** Upright panel of text, standing in the world (not a billboard). */
+function panel(text, opt, height) {
+  const {tex, aspect} = labelTexture(text, opt);
+  const m = new THREE.Mesh(
+    new THREE.PlaneGeometry(height * aspect, height),
+    new THREE.MeshBasicMaterial({map:tex, transparent:true, depthWrite:false,
+                                 opacity:opt.opacity ?? 1,
+                                 blending:opt.additive ? THREE.AdditiveBlending
+                                                       : THREE.NormalBlending}));
+  m.renderOrder = 3;
+  return m;
+}
+
+/** Billboard that always faces the camera. */
+function billboard(text, opt, height) {
+  const {tex, aspect} = labelTexture(text, opt);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({
+    map:tex, transparent:true, depthWrite:false, opacity:opt.opacity ?? 1}));
+  s.scale.set(height * aspect, height, 1);
+  s.renderOrder = 4;
+  return s;
+}
+
+/** Soft radial blob — cheap stand-in for a glow, no post-processing needed. */
+function glowTexture(inner, outer) {
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  const ctx = c.getContext("2d");
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, inner);
+  g.addColorStop(0.45, outer);
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  return finish(c);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y,     x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x,     y + h, r);
+  ctx.arcTo(x,     y + h, x,     y,     r);
+  ctx.arcTo(x,     y,     x + w, y,     r);
+  ctx.closePath();
+}
+
+/** Wrap `text` to `width` px in the current ctx font; returns the lines. */
+function wrap(ctx, text, width) {
+  const out = [];
+  let line = "";
+  for (const word of text.split(/\s+/)) {
+    const t = line ? line + " " + word : word;
+    if (ctx.measureText(t).width > width && line) { out.push(line); line = word; }
+    else line = t;
+  }
+  if (line) out.push(line);
+  return out;
+}
+
+/* ══ style: camera, lights, ground, view angles ══════════════════════════ */
+
+const AUTOSPIN = 0.05;                    // a carousel may drift; it invites the drag
+const AIM_FRAC = 0.5;
+const ALL_PHI = 1.26, ALL_THETA = 0.00;
+const WK_PHI  = 1.40, WK_THETA  = 0.00;
+const ALL_SLACK = 1.05, WK_SLACK = 1.06;
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.5, 900);
+
+scene.background = new THREE.Color(0x070b16);
+
+/* Nothing here is shaded — the cards are unlit so their type stays crisp at any
+   angle — but a faint ambient keeps any future solid from going black. */
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+
+/* Backdrop sphere: a vertical wash, lighter at the horizon, so the column of
+   rings has something to sit against and the far cards fall away into it. */
+{
+  const c = document.createElement("canvas");
+  c.width = 4; c.height = 256;
+  const ctx = c.getContext("2d");
+  const g = ctx.createLinearGradient(0, 0, 0, 256);
+  g.addColorStop(0.00, "#04060d");
+  g.addColorStop(0.52, "#101a33");
+  g.addColorStop(1.00, "#05080f");
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 4, 256);
+  const sky = new THREE.Mesh(new THREE.SphereGeometry(340, 32, 24),
+    new THREE.MeshBasicMaterial({map: finish(c), side: THREE.BackSide}));
+  scene.add(sky);
+}
+
+/* Dust: parallax you can feel when the column turns. Seeded, so the stills of
+   this page are reproducible. */
+{
+  const r = rng(20260811);
+  const n = 1100, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    pos[i*3+0] = (r() - 0.5) * 190;
+    pos[i*3+1] = (r() - 0.5) * 130;
+    pos[i*3+2] = (r() - 0.5) * 190;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  scene.add(new THREE.Points(geo, new THREE.PointsMaterial({
+    color: 0x9fc4ff, size: 0.30, transparent: true, opacity: 0.5,
+    depthWrite: false, blending: THREE.AdditiveBlending})));
+}
+
+/* The card face. Everything the linked table would tell you, printed. */
+function cardTexture(q, wk) {
+  const W = 512, H = 700, M = 32;
+  const col = DATA.ranks[q.rank].color;
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d");
+
+  ctx.fillStyle = "#0e1626"; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = col;       ctx.fillRect(0, 0, W, 96);
+  ctx.textBaseline = "middle";
+
+  ctx.fillStyle = "#08101f";
+  ctx.font = "700 54px " + FONT;
+  ctx.fillText("Q" + q.q, M, 50);
+  ctx.textAlign = "right";
+  ctx.font = "600 33px " + FONT;
+  ctx.globalAlpha = 0.72;
+  ctx.fillText(DATA.ranks[q.rank].name, W - M, 52);
+  ctx.globalAlpha = 1;
+  ctx.textAlign = "left";
+
+  /* Fixed rows rather than a flowing layout: 15 cards that all break in the
+     same places are far easier to compare than 15 that each fit themselves. */
+  ctx.fillStyle = "#e8eef8";
+  ctx.font = "600 45px " + FONT;
+  wrap(ctx, q.title, W - 2*M).slice(0, 3).forEach((ln, i) =>
+    ctx.fillText(ln, M, 168 + i * 55));
+
+  ctx.fillStyle = col;
+  ctx.font = '500 31px ui-monospace,SFMono-Regular,Menlo,monospace';
+  ctx.fillText(q.cx.length > 24 ? q.cx.slice(0, 23) + "…" : q.cx, M, 356);
+
+  ctx.strokeStyle = "rgba(148,163,184,.24)";
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(M, 390); ctx.lineTo(W - M, 390); ctx.stroke();
+
+  ctx.fillStyle = "#93a7c2";
+  ctx.font = "400 26px " + FONT;
+  const lines = wrap(ctx, q.plain, W - 2*M);
+  lines.slice(0, 5).forEach((ln, i) => ctx.fillText(
+    i === 4 && lines.length > 5 ? ln.replace(/\s+\S*$/, "…") : ln, M, 424 + i * 34));
+
+  /* Six slots, one per class, filled to this question's rank — the legend's
+     ramp restated on the card itself. */
+  const segs = 6, sw = (W - 2*M - (segs - 1) * 8) / segs;
+  for (let i = 0; i < segs; i++) {
+    ctx.fillStyle = i < q.rank ? col : "rgba(148,163,184,.16)";
+    ctx.fillRect(M + i * (sw + 8), 606, sw, 11);
+  }
+
+  ctx.fillStyle = "#5f7391";
+  ctx.font = '400 23px ui-monospace,SFMono-Regular,Menlo,monospace';
+  ctx.fillText(q.src.length > 34 ? q.src.slice(0, 33) + "…" : q.src, M, 664);
+  ctx.textAlign = "right";
+  ctx.fillStyle = col;
+  ctx.font = "600 23px " + FONT;
+  ctx.fillText("open ↗", W - M, 664);
+  ctx.textAlign = "left";
+
+  ctx.strokeStyle = "rgba(148,163,184,.20)";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(1.5, 1.5, W - 3, H - 3);
+  return finish(c);
+}
+
+/* Orbit the column's axis, not the arc's centroid: spinning around the middle
+   of a bulging arc feels like the scene is sliding away from you. The floor on
+   the camera distance is what keeps it outside its own ring. */
+function styleView(key) {
+  const theta = controls ? controls.tSph.theta : 0;
+  const floor = RING + 3;          // just outside the front card
+  if (key === "all") {
+    const b = new THREE.Box3().setFromPoints(worldPts);
+    const aim = new THREE.Vector3(0, (b.min.y + b.max.y) / 2, 0);
+    return Object.assign({aim, phi: ALL_PHI, theta},
+      fitView(worldPts, aim, ALL_PHI, theta, ALL_SLACK, floor));
+  }
+  const d = districts[key];
+  const aim = new THREE.Vector3(0, d.y, 0);
+  return Object.assign({aim, phi: WK_PHI, theta},
+    fitView(d.pts, aim, WK_PHI, theta, WK_SLACK, floor));
+}
+
+
+/* ══ orbit controls (hand-rolled: no examples/ import needed) ════════════ */
+class Orbit {
+  constructor(cam, dom, target) {
+    this.cam = cam; this.dom = dom;
+    this.ortho = !!cam.isOrthographicCamera;
+    this.target = target.clone(); this.tTarget = target.clone();
+    this.sph = new THREE.Spherical(72, 1.12, 0.15);
+    this.tSph = this.sph.clone();
+    this.zoom = 1; this.tZoom = 1;
+    this.minR = 12; this.maxR = 320;
+    this.minPhi = 0.10; this.maxPhi = Math.PI * 0.492;
+    this.damp = 0.11;
+    this.autoRotate = !STILL && AUTOSPIN > 0; this.autoSpeed = AUTOSPIN;
+    this.drag = null; this.px = 0; this.py = 0; this.moved = 0;
+    this._bind();
+    this.apply(1);
+  }
+  _bind() {
+    const d = this.dom;
+    d.style.touchAction = "none";
+    d.addEventListener("pointerdown", e => {
+      d.setPointerCapture(e.pointerId);
+      this.drag = (e.button === 2 || e.shiftKey) ? "pan" : "orbit";
+      this.px = e.clientX; this.py = e.clientY; this.moved = 0;
+      this.autoRotate = false;
+    });
+    d.addEventListener("pointermove", e => {
+      const dx = e.clientX - this.px, dy = e.clientY - this.py;
+      this.px = e.clientX; this.py = e.clientY;
+      if (!this.drag) { hover(e); return; }
+      this.moved += Math.abs(dx) + Math.abs(dy);
+      if (this.drag === "orbit") {
+        this.tSph.theta -= dx * 0.0052;
+        this.tSph.phi = clamp(this.tSph.phi - dy * 0.0045, this.minPhi, this.maxPhi);
+      } else {
+        const k = (this.ortho ? 26 / this.zoom : this.tSph.radius) * 0.0016;
+        const right = new THREE.Vector3().setFromSpherical(
+          new THREE.Spherical(1, Math.PI/2, this.tSph.theta + Math.PI/2));
+        this.tTarget.addScaledVector(right, -dx * k);
+        this.tTarget.y = clamp(this.tTarget.y + dy * k, -6, 60);
+      }
+      hideTip();
+    });
+    const end = e => {
+      if (this.drag === "orbit" && this.moved < 5) click(e);
+      this.drag = null;
+      try { d.releasePointerCapture(e.pointerId); } catch (_) {}
+    };
+    d.addEventListener("pointerup", end);
+    d.addEventListener("pointercancel", () => { this.drag = null; });
+    d.addEventListener("contextmenu", e => e.preventDefault());
+    d.addEventListener("wheel", e => {
+      e.preventDefault();
+      this.autoRotate = false;
+      const f = Math.exp(e.deltaY * 0.0011);
+      /* An orthographic camera has no useful distance, so the wheel drives
+         zoom instead — same gesture, same direction. */
+      if (this.ortho) this.tZoom = clamp(this.tZoom / f, 0.25, 9);
+      else this.tSph.radius = clamp(this.tSph.radius * f, this.minR, this.maxR);
+    }, {passive:false});
+  }
+  goto(v) {
+    this.tTarget.copy(v.aim);
+    if (v.radius !== undefined) this.tSph.radius = clamp(v.radius, this.minR, this.maxR);
+    if (v.zoom   !== undefined) this.tZoom = clamp(v.zoom, 0.25, 9);
+    if (v.phi    !== undefined) this.tSph.phi = clamp(v.phi, this.minPhi, this.maxPhi);
+    if (v.theta  !== undefined) this.tSph.theta = v.theta;
+    this.autoRotate = false;
+  }
+  apply(k) {
+    const s = this.sph, t = this.tSph;
+    s.radius += (t.radius - s.radius) * k;
+    s.phi    += (t.phi    - s.phi   ) * k;
+    s.theta  += (t.theta  - s.theta ) * k;
+    this.zoom += (this.tZoom - this.zoom) * k;
+    this.target.lerp(this.tTarget, k);
+    this.cam.position.setFromSpherical(s).add(this.target);
+    this.cam.lookAt(this.target);
+    if (this.ortho && Math.abs(this.cam.zoom - this.zoom) > 1e-4) {
+      this.cam.zoom = this.zoom;
+      this.cam.updateProjectionMatrix();
+    }
+  }
+  update(dt) {
+    if (this.autoRotate) this.tSph.theta += this.autoSpeed * dt;
+    this.apply(1 - Math.pow(1 - this.damp, dt * 60));
+  }
+}
+
+/* Exact framing: iterate until every content point projects inside the frustum.
+   Fitting the true hull rather than a bounding box matters — the box's empty top
+   corners would otherwise reserve a large part of the frame for nothing.
+
+   `minR` is a floor on the camera distance, for layouts that curve around the
+   orbit target: let the iteration start inside the content and the near objects
+   fall behind the camera, where project() returns nonsense and the fit collapses
+   toward zero instead of converging. */
+function fitView(pts, aim, phi, theta, slack, minR) {
+  const floor = minR ?? 0;
+  const probe = camera.clone();
+  const diag = new THREE.Box3().setFromPoints(pts).getSize(new THREE.Vector3()).length();
+  const measure = () => {
+    probe.lookAt(aim); probe.updateMatrixWorld(true);
+    let m = 0;
+    for (const p of pts) {
+      const q = p.clone().project(probe);
+      m = Math.max(m, Math.abs(q.x), Math.abs(q.y));
+    }
+    return m;
+  };
+  if (probe.isOrthographicCamera) {
+    probe.zoom = 1; probe.updateProjectionMatrix();
+    probe.position.setFromSpherical(new THREE.Spherical(diag * 2.5, phi, theta)).add(aim);
+    return {radius: diag * 2.5, zoom: 1 / (measure() * (slack ?? 1.04))};
+  }
+  let r = Math.max(diag, floor);
+  for (let i = 0; i < 9; i++) {
+    probe.position.setFromSpherical(new THREE.Spherical(r, phi, theta)).add(aim);
+    r = Math.max(floor, r * clamp(measure(), 0.3, 4));
+  }
+  return {radius: Math.max(floor, r * (slack ?? 1.04))};
+}
+
+/* Aim below the vertical middle: the content reads better sitting low. */
+function aimFor(pts, frac) {
+  const b = new THREE.Box3().setFromPoints(pts);
+  const c = b.getCenter(new THREE.Vector3());
+  c.y = b.min.y + (b.max.y - b.min.y) * (frac ?? AIM_FRAC);
+  return c;
+}
+
+/* ══ style: build the scene from the data ════════════════════════════════ */
+
+const CW = 3.62, CHH = 4.95, CT = 0.15;   // card width, height, thickness
+const RING = 21;                          // ring radius
+const APITCH = 0.247;                     // angular gap between cards
+const TIER = 8.4;                         // vertical spacing between rings
+
+const backMat = new THREE.MeshBasicMaterial({color:0x131d31});
+
+DATA.weeks.forEach((wk, wi) => {
+  /* Week 1 on top, so scanning the column downward is chronological — the same
+     order as the README's table. */
+  const y = (DATA.weeks.length - 1) / 2 * TIER - wi * TIER;
+
+  const g = new THREE.Group();
+  world.add(g);
+
+  const pts = [], solids = [], fades = [], cards = [];
+
+  /* The full ring, not just the occupied arc: it reads as a track, which is the
+     hint that the column turns. */
+  {
+    const pos = [];
+    for (let i = 0; i <= 128; i++) {
+      const a = i / 128 * Math.PI * 2;
+      pos.push(Math.sin(a) * RING, y - CHH/2 - 0.7, Math.cos(a) * RING);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    const track = new THREE.Line(geo, new THREE.LineBasicMaterial({
+      color:0x3f5a80, transparent:true, opacity:0.55}));
+    g.add(track);
+    fades.push({mat: track.material, base: 0.55});
+  }
+
+  /* Session header, printed on the same radius as the cards so it sits on the
+     row rather than floating over it. */
+  {
+    const c = document.createElement("canvas");
+    c.width = 1024; c.height = 168;
+    const ctx = c.getContext("2d");
+    ctx.textBaseline = "middle"; ctx.textAlign = "center";
+    ctx.fillStyle = "#dce7f7";
+    ctx.font = "700 62px " + FONT;
+    ctx.fillText(wk.folder.toUpperCase() + "   ·   " + wk.lab.toUpperCase(), 512, 46);
+    ctx.fillStyle = "#7d95b6";
+    ctx.font = "500 40px " + FONT;
+    ctx.fillText(wk.date + "   ·   " + wk.questions.length + " questions   ·   "
+                 + wk.figs, 512, 122);
+    const head = new THREE.Mesh(new THREE.PlaneGeometry(11.6, 1.9),
+      new THREE.MeshBasicMaterial({map: finish(c), transparent:true,
+                                   depthWrite:false}));
+    head.position.set(0, y + CHH/2 + 1.25, RING);
+    g.add(head);
+    fades.push({mat: head.material, base: 1});
+    pts.push(new THREE.Vector3(0, y + CHH/2 + 2.15, RING));
+  }
+
+  wk.questions.forEach((q, i) => {
+    const n = wk.questions.length;
+    const a = (i - (n-1)/2) * APITCH;
+    const col = new THREE.Color(DATA.ranks[q.rank].color);
+
+    /* A real card: printed face, coloured edge, plain back. BoxGeometry gives
+       one material slot per face, which is exactly the six surfaces of a card. */
+    const face = new THREE.MeshBasicMaterial({map: cardTexture(q, wk)});
+    const edge = new THREE.MeshBasicMaterial({color: col.clone().multiplyScalar(0.8)});
+    const card = new THREE.Mesh(new THREE.BoxGeometry(CW, CHH, CT),
+                                [edge, edge, edge, edge, face, backMat]);
+    card.position.set(Math.sin(a) * RING, y, Math.cos(a) * RING);
+    card.rotation.y = a;                    // face outward, away from the axis
+    card.userData = {q, wk, di: wi, a, y, delay: wi * 0.15 + i * 0.07,
+                     base: col, home: card.position.clone(),
+                     out: new THREE.Vector3(Math.sin(a), 0, Math.cos(a))};
+    g.add(card);
+    blocks.push(card);
+    cards.push(card);
+    solids.push({mat: face, base: new THREE.Color(0xffffff)},
+                {mat: edge, base: edge.color.clone()});
+
+    /* Halo just behind the card, additive: hovering lights the card's own
+       complexity colour around its border. */
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(CW * 1.30, CHH * 1.22),
+      new THREE.MeshBasicMaterial({map: glowTexture("rgba(255,255,255,.9)",
+        "rgba(255,255,255,.28)"), color: col, transparent: true, opacity: 0,
+        depthWrite: false, blending: THREE.AdditiveBlending}));
+    halo.position.copy(card.position).addScaledVector(card.userData.out, -0.09);
+    halo.rotation.y = a;
+    g.add(halo);
+    card.userData.halo = halo;
+
+    for (const sx of [-1, 1]) for (const sy of [-1, 1])
+      pts.push(new THREE.Vector3(
+        card.position.x + Math.cos(a) * sx * CW/2, y + sy * CHH/2,
+        card.position.z - Math.sin(a) * sx * CW/2));
+  });
+
+  worldPts.push(...pts);
+  districts.push({group:g, wk, y, pts, solids, fades, cards, dim:0, dimT:0});
+});
+
+document.getElementById("stat-q").textContent =
+  DATA.weeks.reduce((a,w)=>a+w.questions.length, 0);
+
+
+document.getElementById("stat-w").textContent = DATA.weeks.length;
+
+/* ══ view + controls ═════════════════════════════════════════════════════ */
+/* A style may define styleView(key) to override framing; otherwise the whole
+   hull is framed for "all" and one district's hull for a week. */
+function viewFor(key) {
+  if (typeof styleView === "function") {
+    const v = styleView(key);
+    if (v) return v;
+  }
+  if (key === "all") {
+    const aim = aimFor(worldPts);
+    return Object.assign({aim}, fitView(worldPts, aim, ALL_PHI, ALL_THETA, ALL_SLACK),
+                         {phi: ALL_PHI, theta: ALL_THETA});
+  }
+  const pts = districts[key].pts;
+  const aim = aimFor(pts);
+  return Object.assign({aim}, fitView(pts, aim, WK_PHI, WK_THETA, WK_SLACK),
+                       {phi: WK_PHI, theta: WK_THETA});
+}
+
+const controls = new Orbit(camera, renderer.domElement, aimFor(worldPts));
+{
+  const v = viewFor("all");
+  controls.goto(v);
+  controls.sph.copy(controls.tSph);
+  controls.zoom = controls.tZoom;
+  controls.target.copy(controls.tTarget);
+  controls.autoRotate = !STILL && AUTOSPIN > 0;
+  controls.apply(1);
+}
+/* A style may constrain the controls once they exist — locking the elevation
+   for an isometric view, say. */
+if (typeof stylePost === "function") stylePost();
+
+/* ══ hover + click ═══════════════════════════════════════════════════════ */
+const ray = new THREE.Raycaster();
+const ndc = new THREE.Vector2();
+const tip = document.getElementById("tip");
+let hot = null;
+
+function pick(e) {
+  ndc.x = (e.clientX / innerWidth) * 2 - 1;
+  ndc.y = -(e.clientY / innerHeight) * 2 + 1;
+  ray.setFromCamera(ndc, camera);
+  const live = blocks.filter(b => districts[b.userData.di].dim < 0.35);
+  return ray.intersectObjects(live, false)[0]?.object ?? null;
+}
+function hideTip() { tip.style.opacity = 0; }
+
+function hover(e) {
+  const m = pick(e);
+  if (m !== hot) {
+    if (hot) hot.userData.hot = false;
+    hot = m;
+    if (hot) hot.userData.hot = true;
+    renderer.domElement.style.cursor = hot ? "pointer" : "grab";
+  }
+  if (!hot) { hideTip(); return; }
+  const {q, wk} = hot.userData;
+  tip.querySelector(".eyebrow").textContent =
+    wk.folder + " · " + wk.lab + " · Question " + q.q;
+  tip.querySelector("h3").textContent = q.title;
+  tip.querySelector(".cx").innerHTML = q.cxmd;
+  tip.querySelector(".desc").innerHTML = q.desc;
+  tip.querySelector(".go").innerHTML =
+    "click to open <code>" + q.src + "</code>" +
+    (q.plots ? " &nbsp;·&nbsp; " + q.plots + " plot" + (q.plots>1?"s":"") : "");
+  tip.style.opacity = 1;
+  const r = tip.getBoundingClientRect();
+  tip.style.left = clamp(e.clientX + 18, 8, innerWidth  - r.width  - 8) + "px";
+  tip.style.top  = clamp(e.clientY + 18, 8, innerHeight - r.height - 8) + "px";
+}
+
+function click(e) {
+  const m = pick(e);
+  if (m) window.open(m.userData.q.url, "_blank", "noopener");
+}
+
+/* ══ focus ═══════════════════════════════════════════════════════════════ */
+const navBtns = [...document.querySelectorAll("#nav button")];
+let view = "all";
+function focusOn(key) {
+  view = key;
+  navBtns.forEach(b => b.classList.toggle("on", b.dataset.focus === String(key)));
+  /* Dim the sessions you are not looking at: whatever sits between the camera
+     and the subject would otherwise loom across the foreground. */
+  districts.forEach((d, i) => d.dimT = (key === "all" || i === key) ? 0 : 1);
+  controls.goto(viewFor(key));
+  hideTip();
+}
+navBtns.forEach(b => b.addEventListener("click", () => focusOn(
+  b.dataset.focus === "all" ? "all" : +b.dataset.focus)));
+addEventListener("keydown", e => {
+  if (e.key === "0") { focusOn("all"); return; }
+  const n = +e.key;
+  if (n >= 1 && n <= districts.length) focusOn(n - 1);
+  if (typeof styleKey === "function") styleKey(e);
+});
+
+/* ?week=3 opens straight to that lab session. */
+const wantWeek = +QS.get("week");
+if (wantWeek >= 1 && wantWeek <= districts.length) {
+  focusOn(wantWeek - 1);
+  controls.apply(1);                    // snap, don't glide, on first paint
+  if (STILL) districts.forEach(d => d.dim = d.dimT);
+}
+
+/* ══ loop ════════════════════════════════════════════════════════════════ */
+const clock = new THREE.Clock();
+let elapsed = 0;
+const BG = scene.background.isColor ? scene.background : new THREE.Color(0x0b1120);
+
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  elapsed += dt;
+  const k = 1 - Math.pow(0.004, dt);
+
+  /* per-district dimming — colour-faded toward the background rather than
+     alpha, so depth sorting and shadows are left alone */
+  for (const d of districts) {
+    d.dim += (d.dimT - d.dim) * k;
+    const o = 1 - d.dim * 0.92;
+    for (const s of d.solids) s.mat.color.copy(s.base).lerp(BG, d.dim * 0.92);
+    for (const f of d.fades) f.mat.opacity = f.base * o;
+    /* once faded into the background, drop it entirely: framing a back row
+       leaves a front row between camera and subject, where even a ghost is a
+       nuisance */
+    d.group.visible = d.dim < 0.9;
+  }
+
+
+  for (const card of blocks) {
+    const u = card.userData;
+    const dim = districts[u.di].dim;
+    const vis = 1 - dim * 0.92;
+    /* Cards deal in: they rise into the ring and untilt. */
+    const t = STILL ? 1 : clamp((elapsed - 0.25 - u.delay) / 0.7, 0, 1);
+    const e = easeOut(t);
+    u.lift = (u.lift ?? 0) + ((u.hot ? 1 : 0) - (u.lift ?? 0)) * k;
+
+    card.position.copy(u.home)
+        .addScaledVector(u.out, u.lift * 0.85)          // toward the viewer
+        .setY(u.y + (1 - e) * -2.6 + u.lift * 0.30);
+    card.scale.setScalar(0.001 + e * (1 + u.lift * 0.045));
+    card.rotation.y = u.a;
+    card.rotation.x = (1 - e) * -0.5;
+    card.visible = e > 0.005;
+
+    u.halo.position.copy(card.position).addScaledVector(u.out, -0.09);
+    u.halo.scale.setScalar(card.scale.x);
+    u.halo.material.opacity = u.lift * 0.85 * vis * e;
+    u.halo.visible = u.halo.material.opacity > 0.01;
+  }
+
+
+  controls.update(dt);
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+frame();
+
+addEventListener("resize", () => {
+  if (camera.isOrthographicCamera) {
+    const h = 26, w = h * innerWidth / innerHeight;
+    Object.assign(camera, {left:-w, right:w, top:h, bottom:-h});
+  } else {
+    camera.aspect = innerWidth / innerHeight;
+  }
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  focusOn(view);                        // reframe: the fit depends on aspect
+});
+renderer.domElement.style.cursor = "grab";
+
+/* ══ legend ══════════════════════════════════════════════════════════════ */
+
+const list = document.getElementById("legend-list");
+Object.keys(DATA.ranks).sort((a,b)=>b-a).forEach(r => {
+  const {name, color} = DATA.ranks[r];
+  const li = document.createElement("li");
+  li.innerHTML = '<i style="background:' + color +
+                 ';height:11px;border-radius:3px"></i><span>' + name + '</span>';
+  list.appendChild(li);
+});
+
+</script>
+</body>
+</html>
