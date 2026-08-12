@@ -1,0 +1,22 @@
+$ gcc -Wall -Wextra q1_binary_vs_ternary_search.c -o q1 -lm
+$ ./q1
+
+=====================================================
+ COMPARISONS: BINARY (2 intervals) vs TERNARY (3)
+=====================================================
+------------------------------------------------------------------------------
+       n   bin avg   ter avg    bin wc    ter wc    ratio wc/log2 n wc/log3 n
+------------------------------------------------------------------------------
+      15      6.73      8.35         8        12     1.24      2.05      4.87
+      63     10.66     12.58        12        16     1.18      2.01      4.24
+     255     14.58     16.54        16        24     1.13      2.00      4.76
+    1023     18.57     21.59        20        28     1.16      2.00      4.44
+    4095     22.49     26.52        24        32     1.18      2.00      4.23
+   16383     26.56     30.51        28        36     1.15      2.00      4.08
+   65535     30.73     35.43        32        44     1.15      2.00      4.36
+
+Binary  : 2 comparisons per level, log2(n) levels  -> 2*log2 n
+Ternary : 4 comparisons per level, log3(n) levels  -> 4*log3 n
+Ratio   : 4*log3 n / 2*log2 n = 2*log(2)/log(3) = 1.2619
+So ternary does about 26% more comparisons: binary is better.
+

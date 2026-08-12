@@ -1,0 +1,27 @@
+$ gcc -Wall -Wextra q6_selection_sort_invariant.c -o q6
+$ ./q6
+
+=====================================================
+ SELECTION SORT: COMPARISONS DO NOT DEPEND ON THE INPUT
+=====================================================
+--------------------------------------------------------------------------
+     n      sorted     reverse      random     n(n-1)/2    swaps    C/n^2
+--------------------------------------------------------------------------
+     8          28          28          28           28        7    0.438
+    32         496         496         496          496       31    0.484
+   128        8128        8128        8128         8128      127    0.496
+   512      130816      130816      130816       130816      511    0.499
+  1024      523776      523776      523776       523776     1023    0.500
+  2048     2096128     2096128     2096128      2096128     2047    0.500
+
+Invariant : A[0..i) holds the i smallest elements, sorted.
+  init    : i = 0, the prefix is empty - vacuously true.
+  maint   : pass i puts the smallest of A[i..n) at A[i], so the
+            prefix grows by one and stays correct.
+  term    : i = n-1, so A[0..n-1) is the n-1 smallest in order
+            and A[n-1] must be the largest - the array is sorted.
+
+Worst case Theta(n^2), best case Theta(n^2) - the same, because the
+inner loop always scans the whole suffix whatever it finds.  Only
+the swap count is fixed at n-1; no early exit is possible.
+

@@ -1,0 +1,21 @@
+$ gcc -Wall -Wextra q2_defective_coin.c -o q2
+$ ./q2
+
+=====================================================
+ WEIGHINGS TO FIND THE LIGHT COIN (or report none)
+=====================================================
+-------------------------------------------------------------
+       n        avg      worst ceil(log3 n)    wc/log2 n
+-------------------------------------------------------------
+       3       1.44          2            1         1.00
+       9       2.21          3            2         0.75
+      27       3.12          4            3         0.80
+      81       4.11          5            4         0.71
+     243       5.10          6            5         0.75
+     729       6.10          7            6         0.70
+    2187       7.10          8            7         0.67
+
+Every trial's answer was checked against the hidden position,
+and every position was tried exhaustively at each size.
+Worst case = ceil(log3 n) + 1 <= log2 n + c, so the bound holds.
+

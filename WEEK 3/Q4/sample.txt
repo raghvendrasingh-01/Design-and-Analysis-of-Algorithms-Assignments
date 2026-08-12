@@ -1,0 +1,21 @@
+$ gcc -Wall -Wextra q4_strassen_matrix_multiply.c -o q4 -lm
+$ ./q4
+
+=====================================================
+ STRASSEN vs THE NAIVE TRIPLE LOOP
+=====================================================
+------------------------------------------------------------------------------
+     n    Str mult    n^3 mult    ratio      Str add    Str total    nav total
+------------------------------------------------------------------------------
+     2           7           8     1.14           18           25           12
+     4          49          64     1.31          198          247          112
+     8         343         512     1.49         1674         2017          960
+    16        2401        4096     1.71        12870        15271         7936
+    32       16807       32768     1.95        94698       111505        64512
+    64      117649      262144     2.23       681318       798967       520192
+   128      823543     2097152     2.55      4842954      5666497      4177920
+
+T(n) = 7T(n/2) + 18(n/2)^2  ->  multiplications = 7^log2(n) = n^2.807
+Strassen wins on multiplications at every size, but its 18 block
+additions per level cost more than the 4 they save until n is large.
+
