@@ -257,9 +257,7 @@ the intro animation and the idle drift (which is how the stills here were taken)
 | Lab 02 | Data structure trade-offs, divide and conquer, the master theorem | 04 Aug 2026 | 3 | [WEEK 2](WEEK%202) |
 | Lab 03 | Divide and conquer — search, matrix multiplication, loop invariants | 11 Aug 2026 | 6 | [WEEK 3](WEEK%203) |
 
-Each session below links into the same scene, opened on that lab. The tables
-repeat it as text, because a picture is no good for searching or for screen
-readers.
+Each session below links into the same scene, opened on that lab.
 
 ### WEEK 1 — Lab 01
 
@@ -270,15 +268,6 @@ readers.
   <img src="3d-preview/shot-cards-week1.png" alt="WEEK 1, Lab 01 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
 </a>
 
-| # | Question | Description | Complexity | Docs |
-|---|----------|-------------|------------|------|
-| 1 | **Put Them in Order** | Arrange 12 given functions in increasing order of growth for sufficiently large `n`. | Θ(T·F² + T²·F) time, Θ(F·T) space | [README](WEEK%201/Q1/README.md) · [code](WEEK%201/Q1/q1_growth_order.c) |
-| 2 | **Fair vs Biased Coin** | Simulate a coin toss, verify that P(HEAD) → 0.5, then compare a fair coin against biased ones. | Θ(n) time, Θ(1) space | [README](WEEK%201/Q2/README.md) · [code](WEEK%201/Q2/q2_coin_toss.c) |
-| 3 | **Bubble Sort Performance** | Compare a bubble sort that stops early once sorted against one that always runs all `n−1` passes. | Ω(n) / O(n²) time, Θ(1) space | [README](WEEK%201/Q3/README.md) · [code](WEEK%201/Q3/q3_bubble_sort_performance_analysis.c) |
-| 4 | **Towers of Hanoi** | Simulate the puzzle, tabulate moves for `n` discs, and match against the closed form. | Θ(2ⁿ) time, Θ(n) space | [README](WEEK%201/Q4/README.md) · [code](WEEK%201/Q4/q4_towers_of_hanoi.c) |
-| 5 | **Find the Partition Point** | Given an array of 0s followed by 1s, locate the exact transition index. | Θ(log n) time, Θ(1) space | [README](WEEK%201/Q5/README.md) · [code](WEEK%201/Q5/q5_partition_point.c) |
-| 6 | **Element Uniqueness** | Check whether `n` given numbers are all distinct, and reason about the cost for large `n`. | O(n²) time, Θ(1) space | [README](WEEK%201/Q6/README.md) · [code](WEEK%201/Q6/q6_element_uniqueness.c) |
-
 ### WEEK 2 — Lab 02
 
 > Choosing a data structure by what it costs, and what changes — and what does not —
@@ -288,12 +277,6 @@ readers.
   <img src="3d-preview/shot-cards-week2.png" alt="WEEK 2, Lab 02 — ring of 3 cards, each printing one question's title, cost and summary" width="100%">
 </a>
 
-| # | Question | Description | Complexity | Docs |
-|---|----------|-------------|------------|------|
-| 1 | **Dictionary Operations** | Give the worst-case cost of 7 dictionary operations on 6 array and linked-list layouts, then measure all 42 to confirm. | Θ(1) to Θ(n) per operation | [README](WEEK%202/Q1/README.md) · [code](WEEK%202/Q1/q1_dictionary_operations.c) |
-| 2 | **Merge Sort vs Three-Way Merge Sort** | Split into thirds instead of halves and find the worst-case running time — then show what the base of the logarithm costs. | Θ(n log₃n) = Θ(n log n) | [README](WEEK%202/Q2/README.md) · [code](WEEK%202/Q2/q2_merge_sort_variants.c) |
-| 3 | **Merging k Sorted Arrays** | Accumulate sequentially, or merge in pairs until one array is left. Same `k−1` merges, different complexity class. | Θ(nk²) vs Θ(nk log k) | [README](WEEK%202/Q3/README.md) · [code](WEEK%202/Q3/q3_merge_k_sorted_arrays.c) |
-
 ### WEEK 3 — Lab 03
 
 > Splitting a problem and paying for the split: when a three-way division wins,
@@ -302,15 +285,6 @@ readers.
 <a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=3">
   <img src="3d-preview/shot-cards-week3.png" alt="WEEK 3, Lab 03 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
 </a>
-
-| # | Question | Description | Complexity | Docs |
-|---|----------|-------------|------------|------|
-| 1 | **Binary Search vs Ternary Search** | Search a sorted list by halves and by thirds, then settle which is better by counting comparisons rather than levels. | `2⌈log₂n⌉` vs `4⌈log₃n⌉` — both Θ(log n), ternary 26% dearer | [README](WEEK%203/Q1/README.md) · [code](WEEK%203/Q1/q1_binary_vs_ternary_search.c) |
-| 2 | **Search the Defective Coin** | One coin of `n` may be lighter, or none is. Find it with nothing but a balance scale, inside `log₂ n + c` weighings. | `⌈log₃n⌉ + 1` weighings = Θ(log n) | [README](WEEK%203/Q2/README.md) · [code](WEEK%203/Q2/q2_defective_coin.c) |
-| 3 | **Max and Min using Divide and Conquer** | Find both extremes of an array within the `3n/2` comparison bound, and check the recursion against its unrolled twin. | `3n/2 − 2` comparisons, Θ(n) time | [README](WEEK%203/Q3/README.md) · [code](WEEK%203/Q3/q3_max_min_divide_conquer.c) |
-| 4 | **Matrix Multiplication using Strassen's Method** | Seven half-size products instead of eight — and the eighteen block additions that buy them. | Θ(n^log₂7) = Θ(n²·⁸⁰⁷) | [README](WEEK%203/Q4/README.md) · [code](WEEK%203/Q4/q4_strassen_matrix_multiply.c) |
-| 5 | **Multiplying Special-Pattern Matrices** | Blocks that repeat recursively collapse eight products into two, so a 256×256 product costs 256 multiplications. | Θ(n²) — exactly `3n² − 2n` operations | [README](WEEK%203/Q5/README.md) · [code](WEEK%203/Q5/q5_pattern_matrix_multiply.c) |
-| 6 | **Selection Sort and Loop Invariants** | State the invariant, discharge initialisation, maintenance and termination, then show best case = worst case by measurement. | Θ(n²) in every case, `n−1` swaps | [README](WEEK%203/Q6/README.md) · [code](WEEK%203/Q6/q6_selection_sort_invariant.c) |
 
 ## Features
 
@@ -372,168 +346,6 @@ On **Windows**, use MinGW-w64 and append `.exe` to the output name.
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
 charts using block characters. The Week 2 and Week 3 programs print plain
 ASCII-only tables, so they render anywhere.
-
----
-
-## How to Use
-
-Clone the repository:
-
-```bash
-git clone https://github.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments.git
-cd Design-and-Analysis-of-Algorithms-Assignments
-```
-
-Compile and run any question from its own folder:
-
-```bash
-cd "WEEK 1/Q4"
-gcc -std=c11 -Wall -Wextra q4_towers_of_hanoi.c -o q4
-./q4
-```
-
-**Q1 requires the math library** (`log`, `pow`, `sqrt`), and Q2 calls `fabs()`:
-
-```bash
-cd "WEEK 1/Q1"
-gcc -std=c11 -Wall -Wextra q1_growth_order.c -o q1 -lm
-./q1
-```
-
-Questions that read input can be driven non-interactively:
-
-```bash
-printf '10\n0 0 0 0 0 1 1 1 1 1\n' | ./q5     # Q5
-printf '6\n10 25 3 47 8 19\n'       | ./q6     # Q6
-printf '100000\n'                   | ./q2     # Q2 — tosses per coin
-printf '12\n'                       | ./q3     # Q3 — array size
-```
-
-> **Heads up.** Week 1 Q2, Q3 and Q4 write their CSV into the *current working
-> directory* under a fixed name — `coin_toss_analysis.csv`,
-> `bubble_sort_analysis.csv` and `toh.csv`. Running them from inside their own
-> folder overwrites the committed copies. To keep those files untouched, send the
-> binary to a scratch directory and run it there:
->
-> ```bash
-> cd "WEEK 1/Q4"
-> mkdir -p /tmp/daa
-> gcc -Wall -Wextra q4_towers_of_hanoi.c -o /tmp/daa/q4
-> cd /tmp/daa && ./q4
-> ```
->
-> Week 1 Q1, Q5 and Q6 write nothing to disk, and neither does any Week 2 or
-> Week 3 question — they print their tables straight to the terminal. The Week 2
-> and Week 3 plots were produced separately and committed; no program
-> regenerates them.
-
-**Week 2 Q1 is one file** — all six representations, the claim table, the
-measurement loop and the validation.
-
-```bash
-cd "WEEK 2/Q1"
-gcc -Wall -Wextra q1_dictionary_operations.c -o q1
-./q1
-```
-
-**Week 2 Q2 and Q3 need the math library** for `log()`:
-
-```bash
-cd "WEEK 2/Q3"
-gcc -Wall -Wextra q3_merge_k_sorted_arrays.c -o q3 -lm
-./q3
-```
-
-Every Week 2 measurement is deterministic — the random inputs use a fixed seed — so
-a rerun reproduces the committed `sample.txt` line for line.
-
-**No Week 3 question reads input.** Each one runs a built-in sweep over `n` and
-prints its table, so there is nothing to pipe in:
-
-```bash
-cd "WEEK 3/Q3"
-gcc -Wall -Wextra q3_max_min_divide_conquer.c -o q3
-./q3
-```
-
-**Week 3 Q1 and Q4 need the math library** — Q1 for `log2()` and `log()`, Q4 for
-the `log₂7` exponent it prints:
-
-```bash
-cd "WEEK 3/Q4"
-gcc -Wall -Wextra q4_strassen_matrix_multiply.c -o q4 -lm
-./q4
-```
-
-Week 3 is deterministic too, and for a simpler reason: no program calls `srand()`,
-so `rand()` runs from the standard default seed and every rerun reproduces the
-committed `sample.txt` byte for byte. All six compile clean under
-`-Wall -Wextra`.
-
-Recommended flags while working:
-
-```bash
-gcc -std=c11 -Wall -Wextra -O2 file.c -o out -lm
-```
-
----
-
-## Topics Covered
-
-**Analysis**
-
-- [x] Asymptotic notation — Θ, O, Ω
-- [x] Ordering functions by rate of growth
-- [x] Polynomial vs superpolynomial vs exponential growth
-- [x] Constant factors and crossover points
-- [x] Best case, worst case, and why early exits do not change a bound
-- [x] Counting primitive operations as a machine-independent cost model
-- [x] Why the base of a logarithm vanishes from the class but not from the cost
-- [x] Information-theoretic lower bounds — `log₂(n!)`, `log₂[(kn)!/(n!)^k]`, and
-      the `3n/2 − 2` bound on finding both extremes
-- [x] Doubling ratios as an empirical test of complexity class
-- [x] Loop invariants — initialisation, maintenance, termination
-- [x] Exact closed forms versus asymptotic bounds, and when a count can be
-      confirmed as an identity rather than a trend
-- [x] Why asymptotically better is not better at every size — measuring where the
-      crossover has yet to happen
-
-**Algorithms**
-
-- [x] Merge sort (hand-written, stable, comparator-driven)
-- [x] Three-way and k-way merge sort
-- [x] Merging k sorted arrays — sequential against pairwise
-- [x] Bubble sort and its early-termination variant
-- [x] Selection sort, and why its best case is no better than its worst
-- [x] Binary search / partition point
-- [x] Ternary search, and why extra intervals cost more than they save
-- [x] Searching with a three-outcome oracle — the balance scale
-- [x] Simultaneous maximum and minimum in `3n/2 − 2` comparisons
-- [x] Strassen's matrix multiplication — seven products instead of eight
-- [x] Multiplying block-circulant matrices in `Θ(n²)`
-- [x] Brute-force pairwise comparison
-- [x] Recursion and divide and conquer
-
-**Data Structures**
-
-- [x] Dictionary / ADT operation costs — sorted and unsorted, array and linked
-- [x] Why back pointers make deletion `Θ(1)`
-- [x] Why binary search needs random access
-- [x] Matrices as recursive quadrant blocks, and structure that shrinks the
-      problem — `n` distinct entries mean `n` multiplications
-
-**Recurrences and Randomisation**
-
-- [x] Solving `T(n) = 2T(n−1) + 1`
-- [x] Solving `T(n) = 2T(n/2) + 2` to the exact `3n/2 − 2`
-- [x] Recurrences on a three-way split — `T(n/3) + 1` and `T(n/3) + 4`
-- [x] Verifying a closed form against simulation
-- [x] Monte Carlo simulation and the law of large numbers
-- [x] Biased sampling
-- [x] Master theorem — case 1 on `7T(n/2) + Θ(n²)`, case 2 on `2T(n/2) + Θ(n)`
-      and `3T(n/3) + Θ(n)`, case 3 on `2T(n/2) + Θ(n²)`
-- [x] Constructing adversarial worst-case inputs
-- [ ] Amortised analysis
 
 ---
 
