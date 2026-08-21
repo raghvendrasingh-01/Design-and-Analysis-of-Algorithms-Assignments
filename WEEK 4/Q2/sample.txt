@@ -1,0 +1,21 @@
+$ gcc -Wall -Wextra q2_pair_sum_two_sets.c -o q2 -lm
+$ ./q2
+
+=====================================================
+ A PAIR FROM S1 AND S2 SUMMING TO x : O(n log n)
+=====================================================
+---------------------------------------------------------------------------
+       n    sort S1    sort S2 search cmps walk steps    brute n^2   A/nlgn
+---------------------------------------------------------------------------
+       8         16         14          24          9           64     1.58
+      64        305        304         399        113         4096     1.83
+     512       3988       3969        4608        837       262144     1.86
+    4096      43952      43987       49282       8062     16777216     1.90
+   32768     449984     450056      491520      59494            -     1.92
+  262144    4387258    4386572     4760715     482166            -     1.94
+
+The A/nlgn column - sort S2 plus the searches - stays inside
+1.5-2.0 while n grows 32768x, so A is Theta(n log n), the bound
+asked for, and its two halves cost about the same.  B buys a second
+sort for a walk of 2n - 1 steps; brute force's n^2 dwarfs them all.
+

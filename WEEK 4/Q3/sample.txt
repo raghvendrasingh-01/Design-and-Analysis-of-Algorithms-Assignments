@@ -1,0 +1,28 @@
+$ gcc -Wall -Wextra q3_k_sum_subset.c -o q3 -lm
+$ ./q3
+
+=====================================================
+ k OF n INTEGERS SUMMING TO T : SORT ONCE, THEN SEARCH
+=====================================================
+------------------------------------------------------------------------------
+   k      n       probes       tuples    n^(k-1)lg n    ratio     C(n,k) bf
+------------------------------------------------------------------------------
+   2    500         3650          499           4483    0.814        124750
+   2   1000         8281          999           9966    0.831        499500
+   2   2000        18599         1999          21932    0.848       1999000
+   2   4000        41119         3999          47863    0.859       7998000
+   3     50         4260         1176          14110    0.302         19600
+   3    100        21719         4851          66439    0.327        161700
+   3    200       106032        19701         305754    0.347       1313400
+   3    400       503098        79401        1383017    0.364      10586800
+   4     25         5023         2024          72560    0.069         12650
+   4     40        26950         9139         340603    0.079         91390
+   4     60       113243        32509        1275888    0.089        487635
+   4     90       445363       113564        4732561    0.094       2555190
+
+For each fixed k the ratio holds one constant scale as n grows, rising
+towards 1/(k-1)! from below - only increasing tuples are enumerated and the
+suffixes are shorter than n - never trending like n, so the probes are
+Theta(n^(k-1) log n).  Against the naive C(n,k) column one factor of n is
+traded for a log n: the k-th element is found by search, not a loop.
+

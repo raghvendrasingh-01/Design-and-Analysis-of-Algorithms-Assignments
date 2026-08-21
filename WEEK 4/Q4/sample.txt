@@ -1,0 +1,27 @@
+$ gcc -Wall -Wextra q4_party_peak_occupancy.c -o q4 -lm
+$ ./q4
+
+worked example (n = 6), guests as half-open [a,b) : p1[0,5) p2[1,4) p3[2,9) p4[3,6) p5[7,11) p6[8,10)
+  time      0   1   2   3   4   5   6   7   8   9  10  11
+  delta     1   1   1   1  -1  -1  -1   1   1  -1  -1  -1
+  count     1   2   3   4   3   2   1   2   3   2   1   0
+  peak = 4 guests, first attained at t = 3
+
+=====================================================
+ PEAK SIMULTANEOUS ATTENDANCE BY SORTING THE ENDPOINTS
+=====================================================
+------------------------------------------------------------------
+      n    sortCmps  sweep 2n    peak    peak t    bfChecks  ratio
+------------------------------------------------------------------
+      6          28        12       3         2          42  0.651
+     50         552       100      36        55        2550  0.831
+    500        8734      1000     265       548      250500  0.876
+   5000      120605     10000    2523      5082    25005000  0.908
+  50000     1536615    100000   24925     50176           -  0.925
+ 500000    18706611   1000000  250189    503762           -  0.939
+
+The ratio of sort comparisons to (2n)*log2(2n) climbs in ever
+smaller steps, 0.18 down to 0.014, so it converges and the sort -
+hence the whole algorithm - is Theta(n log n); the sweep column is
+exactly 2n.  Only the 2n endpoints matter, not the times between.
+

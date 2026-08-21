@@ -1,0 +1,27 @@
+$ gcc -Wall -Wextra q6_max_overlap_point.c -o q6 -lm
+$ ./q6
+
+lab sheet example (n = 4)
+  S = (10,40) (20,60) (50,90) (15,70)
+  deepest point p = 20, depth there = 3
+  p = 50 has depth 3, and no point on the line has depth 4
+  shared endpoint (10,40) (40,90) -> depth 2 at p = 40
+
+=====================================================
+ POINT LYING IN THE MOST CLOSED INTERVALS: EVENT SWEEP
+=====================================================
+------------------------------------------------------------------
+      n    sortCmps  sweep 2n   depth         p    bfChecks  ratio
+------------------------------------------------------------------
+      4          16         8       3         2          16  0.667
+     50         533       100      20        97        2500  0.802
+    500        8509      1000      28       355      250000  0.854
+   5000      117462     10000      30       118    25000000  0.884
+  50000     1503874    100000      33     44857           -  0.905
+ 500000    18356223   1000000      37    863681           -  0.921
+
+The sortCmps/(2n)log2(2n) ratio holds inside 0.67..0.92, creeping
+towards 1 as the merge sort's linear -m term amortises away but never
+past it, so the sort is Theta(n log n) and the sweep exactly 2n.  Only
+the 2n endpoints matter, and +1 before -1 at a tie keeps [l,r] closed.
+

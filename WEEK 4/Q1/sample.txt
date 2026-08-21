@@ -1,0 +1,27 @@
+$ gcc -Wall -Wextra q1_three_colour_stable_sort.c -o q1
+$ ./q1
+
+The n = 12 instance in full:
+input (sorted by num)      2B 3B 6B 8R 9B 12B 15B 18B 19R 21B 24Y 25R
+counting sort (stable)     8R 19R 25R 2B 3B 6B 9B 12B 15B 18B 21B 24Y
+dutch flag (unstable)      8R 19R 25R 2B 9B 12B 15B 18B 3B 21B 6B 24Y
+
+=====================================================
+ THREE-COLOUR SORT: LINEAR IS EASY, STABLE IS THE POINT
+=====================================================
+--------------------------------------------------------------------------
+        n   count ops          3n    flag ops   ops/n cs stable dnf stable
+--------------------------------------------------------------------------
+       12          36          36          20    3.00      PASS      FAIL
+      100         300         300         238    3.00      PASS      FAIL
+     1000        3000        3000        2352    3.00      PASS      FAIL
+    10000       30000       30000       23144    3.00      PASS      FAIL
+   100000      300000      300000      233494    3.00      PASS      FAIL
+  1000000     3000000     3000000     2332156    3.00      PASS      FAIL
+
+The count column equals 3n exactly and ops/n is flat, so the sort
+is Theta(n); a comparison sort would cost Omega(n log n) for nothing
+on a 3-valued key.  Both algorithms are linear, but only the stable
+scan keeps the numbers ascending inside a colour - linearity alone
+was never the difficulty.
+
