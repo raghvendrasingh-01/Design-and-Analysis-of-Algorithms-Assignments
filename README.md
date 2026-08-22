@@ -32,16 +32,11 @@ to follow, so a flat column is the proof. Week 3 prints the solved recurrence as
 a column of its own — `3n/2 − 2`, `n(n−1)/2`, `7^log₂n` — beside the measured
 count, so the two columns can be read as an equality rather than an
 approximation, and every count is printed only after the answer that produced it
-has been checked against a brute-force reference. Week 4 turns sorting into a
-subroutine and asks what it buys: each program prints its measured count beside
-the bound the question demands — `3n`, `n log n`, `n^(k−1) log n` — and the ratio
-between them, so a ratio that stays bounded as `n` grows is that bound
-discharged rather than assumed. Beside it sits the brute-force cost the sort
-displaced, `n²` or `C(n, k)`, carried in the same table until it grows too large
-to run and the column gives way to a dash. Its figures are not drawn by hand
-either: [`WEEK 4/make_plots.py`](WEEK%204/make_plots.py) compiles each committed
-program, runs it, and plots the table it printed, so no figure can disagree with
-the numbers above it.
+has been checked against a brute-force reference. Week 4 keeps the table and the
+brute-force cross-check but drops the expectation of a flat column: its ratios
+climb, and each is printed beside the ceiling it climbs towards — `2 − 1/log₂ n`,
+`1/(k−1)!`, `1 − c/log₂ m` — because `O(n log n)` bounds a ratio rather than
+fixing it, so convergence, not flatness, is what the bound actually asks for.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -83,10 +78,6 @@ ones sort themselves out at a glance.
 Hovering lifts a card out of the ring so you can read it, and clicking opens
 its folder on GitHub. The page carries a switcher for the other three styles,
 so one file gets you all four.
-
-> The scene itself covers all four lab sessions. The still above was captured at
-> Week 3, so it shows three rings rather than four — open the map for the current
-> view.
 
 <details>
 <summary><b>Every file, as a conventional tree</b> — the map above is the shape;
@@ -238,7 +229,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │   ├── README.md
     │   ├── q1_three_colour_stable_sort.c
     │   ├── sample.txt
-    │   └── plots/                              # the 3n count, and what stability means
+    │   └── plots/                              # the 3n touches, stability, 2 plots
     │       ├── 1_linearity.png
     │       └── 2_stability.png
     │
@@ -246,7 +237,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │   ├── README.md
     │   ├── q2_pair_sum_two_sets.c
     │   ├── sample.txt
-    │   └── plots/                              # against n^2, and the n log n ratio
+    │   └── plots/                              # sort, search and walk, 2 plots
     │       ├── 1_growth.png
     │       └── 2_ratio.png
     │
@@ -254,7 +245,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │   ├── README.md
     │   ├── q3_k_sum_subset.c
     │   ├── sample.txt
-    │   └── plots/                              # per k, the ratio, and the saving
+    │   └── plots/                              # the n^(k-1) log n bound, 3 plots
     │       ├── 1_probes.png
     │       ├── 2_ratio.png
     │       └── 3_saving.png
@@ -263,7 +254,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │   ├── README.md
     │   ├── q4_party_peak_occupancy.c
     │   ├── sample.txt
-    │   └── plots/                              # growth, the bound, the step function
+    │   └── plots/                              # the half-open sweep, 3 plots
     │       ├── 1_growth.png
     │       ├── 2_ratio.png
     │       └── 3_worked_example.png
@@ -272,7 +263,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │   ├── README.md
     │   ├── q5_merge_intervals.c
     │   ├── sample.txt
-    │   └── plots/                              # growth, compression, the lab sheet's four
+    │   └── plots/                              # the n - 1 merge steps, 3 plots
     │       ├── 1_growth.png
     │       ├── 2_ratio_and_compression.png
     │       └── 3_worked_example.png
@@ -281,7 +272,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
         ├── README.md
         ├── q6_max_overlap_point.c
         ├── sample.txt
-        └── plots/                              # growth, the bound, the depth function
+        └── plots/                              # the closed-interval sweep, 3 plots
             ├── 1_growth.png
             ├── 2_ratio.png
             └── 3_worked_example.png
@@ -324,7 +315,7 @@ the intro animation and the idle drift (which is how the stills here were taken)
 | Lab 01 | Growth of functions, empirical analysis, recurrences | 28 Jul 2026 | 6 | [WEEK 1](WEEK%201) |
 | Lab 02 | Data structure trade-offs, divide and conquer, the master theorem | 04 Aug 2026 | 3 | [WEEK 2](WEEK%202) |
 | Lab 03 | Divide and conquer — search, matrix multiplication, loop invariants | 11 Aug 2026 | 6 | [WEEK 3](WEEK%203) |
-| Lab 04 | Applications of sorting — sorting as a subroutine, sweeps over endpoints | 18 Aug 2026 | 6 | [WEEK 4](WEEK%204) |
+| Lab 04 | Applications of sorting — counting sort, sorted search, event sweeps | 18 Aug 2026 | 6 | [WEEK 4](WEEK%204) |
 
 Each session below links into the same scene, opened on that lab.
 
@@ -357,23 +348,12 @@ Each session below links into the same scene, opened on that lab.
 
 ### WEEK 4 — Lab 04
 
-> Sorting as a subroutine rather than a subject: what the `n log n` preprocessing
-> step buys you, and how far a single sweep over the sorted endpoints can go.
+> Sorting as the step that comes first: what it buys you — a lookup instead of a
+> scan, a sweep instead of every pair — and what it cannot buy.
 
-The six questions, and what each sorts to get there:
-
-| | Question | Cost | Sorting buys |
-|---|---|---|---|
-| Q1 | [Sorting Pairs by Colour in Linear Time](WEEK%204/Q1) | `Θ(n)` — exactly `3n` touches | nothing — a 3-valued key needs counting, not comparing |
-| Q2 | [A Pair from Two Sets Summing to x](WEEK%204/Q2) | `Θ(n log n)` | binary search for `x − a`, so `n²` pairs are never formed |
-| Q3 | [Do k of n Integers Sum to T?](WEEK%204/Q3) | `Θ(n^(k−1) log n)` | the `k`-th element by search, trading one factor of `n` for a `log n` |
-| Q4 | [Peak Simultaneous Attendance at the Party](WEEK%204/Q4) | `Θ(n log n)` | order on the `2n` endpoints, so a `±1` sweep finds the peak |
-| Q5 | [Merging Overlapping Intervals](WEEK%204/Q5) | `Θ(n log n)` | order on left endpoints, making one pass sufficient |
-| Q6 | [The Point Lying in the Most Intervals](WEEK%204/Q6) | `Θ(n log n)` | the same endpoint sweep, `+1` before `−1` to keep `[l, r]` closed |
-
-[**↻ Open this lab in the interactive map**](https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=4)
-&nbsp;·&nbsp; the printed still for this ring is not captured yet, so the cards
-above are listed rather than shown.
+<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=4">
+  <img src="3d-preview/shot-cards-week4.png" alt="WEEK 4, Lab 04 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
+</a>
 
 ## Features
 
@@ -381,9 +361,8 @@ above are listed rather than shown.
   Week 2 solutions print their own time and space complexity before exiting;
   Week 3 closes instead with the recurrence it solved and the conclusion drawn
   from it — `T(n) = 2T(n/2) + 2 → 3n/2 − 2`, and so on for each question. Week 4
-  closes with the reading of its own table: which column is the bound, which is
-  the measurement, and why the ratio between them settling is the required
-  complexity established rather than assumed.
+  closes with the bound it has just demonstrated together with a reading of the
+  column that demonstrates it, naming what that column converges to and why.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
   rather than assume it. Week 1 writes its measurements to CSV and commits the
   plot as SVG beside the source; Week 2 commits its plots as PNG and also prints
@@ -391,42 +370,45 @@ above are listed rather than shown.
   follow, so the claim stands or falls on whether that column stays flat. Week 3
   goes further and prints the exact closed form as a column of its own next to
   the measured count, turning the check into an equality between two columns
-  rather than a ratio that merely settles. Week 4 handles the case where no exact
-  closed form exists — a library sort's comparison count is not a formula — by
-  printing the ratio to the bound and letting boundedness be the claim, with the
-  displaced brute-force cost carried alongside for as long as it remains
-  computable.
-- **Figures generated from the programs, not drawn by hand.** Week 4 commits
-  [`make_plots.py`](WEEK%204/make_plots.py), which compiles each committed `.c`
-  file, runs it, parses the table it prints, and draws all 16 figures from those
-  numbers. Nothing is transcribed, so no figure can contradict the measurements
-  printed above it; if a program's output changes, its plots change with it.
-- **Answers checked before counts are trusted.** Every Week 3 and Week 4 program
-  validates its result against an independent reference and calls `exit(1)` on any
+  rather than a ratio that merely settles. Week 4 keeps the same layout and
+  argues the other way round: its ratio columns rise monotonically, and the
+  reading explains what each is rising towards — `2 − 1/log₂ n` for a sort plus
+  `n` searches, `1/(k−1)!` because only increasing tuples are enumerated,
+  `1 − c/log₂ m` for a merge sort's linear correction term. A bound requires the
+  ratio to stay bounded, not to stay constant, so the honest claim is
+  convergence.
+- **Answers checked before counts are trusted.** Every Week 3 program validates
+  its result against an independent reference and calls `exit(1)` on any
   disagreement — binary and ternary search against a linear scan, the coin
   search against every hiding place exhaustively, max–min three ways against one
   another, both matrix methods entry-by-entry against the naive triple loop, and
   selection sort's invariant asserted at initialisation, at every pass and at
-  termination. Week 4 checks the same way: the colour sort against an explicit
-  stability test, the pair and `k`-subset searches against brute-force enumeration
-  of every pair and every `C(n, k)` combination, and the three sweeps against a
-  direct scan over candidate points. A printed table is therefore evidence in
-  itself: the numbers only appear because the algorithm was right at every size.
+  termination. A printed table is therefore evidence in itself: the numbers only
+  appear because the algorithm was right at every size. Week 4 keeps that rule
+  and adds two habits. Where the quadratic reference is no longer affordable the
+  table prints `-` in that column rather than a number it did not earn, and the
+  cheaper checks that survive — a re-count of the reported witness, a re-addition
+  of the reported pair — still run at every size. And Q1 asserts that the *wrong*
+  algorithm fails: the linear three-way partition is run beside the counting sort
+  and caught breaking within-colour order from `n = 100` upward, so the property
+  under test is shown to be discriminating rather than merely satisfied.
 - **Verified samples.** Each question ships a `sample.txt` with input and output
-  captured from an actual run, not written from memory. The programs seed nothing
-  and read nothing, so a fresh run reproduces its committed sample byte for byte.
+  captured from an actual run, not written from memory.
 - **Hand-written algorithms.** Every algorithm under study is implemented from
   scratch rather than delegated to a library routine, so the implementation is
-  part of the answer.
+  part of the answer. Week 4 is the deliberate exception, and says so where it
+  matters: what is under study there is what sorting *buys*, so the sort is
+  `qsort` and the `O(n log n)` worst case is inherited from the library's
+  contract rather than proved — Q1, the one question whose subject is the sort
+  itself, is written out by hand.
 - **No external dependencies.** The C standard library only — nothing to install
   beyond a compiler, and nothing to run after the program exits.
-- **Consistent documentation.** Every question README covers the same ground —
-  problem statement, approach and analysis, complexity, a worked sample with its
-  output read line by line, and a table of the files shipped, including every
-  generated artefact. The section headings track how each lab is assessed: Week 1
-  separates time and space complexity and shows the build commands, Week 3 adds a
-  committed-artefacts section, and Week 4 leads with a source/sample/build summary
-  table and closes on its figures.
+- **Consistent documentation.** Every question README covers the same ground:
+  problem statement, approach or analysis, complexity, sample input and output,
+  explanation, and files — plus committed artefacts or figures wherever a
+  question ships generated data. Weeks 1 and 2 use explicit build/run and
+  complexity sections; Weeks 3 and 4 put the same information in a header table
+  and add the analysis needed to interpret their measured output.
 
 ---
 
@@ -437,19 +419,11 @@ above are listed rather than shown.
 | GCC | any C99/C11-capable release | Compilation |
 | C standard library | — | `stdio.h`, `stdlib.h`, `string.h`, `time.h`, `math.h`, `float.h` |
 
-That is the whole list for building and running every solution. The programs have
-no external dependencies — all four weeks commit their plots as images, and Weeks
-2, 3 and 4 additionally print their measurements as tables, so reading the
-repository requires nothing but a browser and running it requires nothing but GCC.
-
-Optional, and only to **regenerate** Week 4's figures rather than read them:
-
-| Tool | Purpose |
-|------|---------|
-| Python 3 + matplotlib | `python3 "WEEK 4/make_plots.py"` redraws all 16 figures from the programs' own output |
-
-The figures are committed, so this is never needed to browse the repository — the
-script exists so the plots can be reproduced from source instead of trusted.
+That is the whole list. The programs have no external dependencies — all four
+weeks commit their plots as images, and Weeks 2, 3 and 4 additionally print their
+measurements as tables, so reading the repository requires nothing but a browser
+and running it requires nothing but GCC. Questions that pull in `math.h` are
+linked with `-lm`; each question's README carries its exact build line.
 
 Installing GCC, if it is not already present:
 
@@ -459,9 +433,6 @@ brew install gcc                                         # macOS
 ```
 
 On **Windows**, use MinGW-w64 and append `.exe` to the output name.
-
-Some Week 4 programs call `math.h`, so on Linux append `-lm` when linking — each
-question's README gives its own build line.
 
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
 charts using block characters. The Week 2, Week 3 and Week 4 programs print plain
@@ -479,22 +450,18 @@ ASCII-only tables, so they render anywhere.
   problem, not just its number. One question, one source file.
 - Every program closes with its own analysis — Weeks 1 and 2 print the time and
   space complexity, Week 3 prints the recurrence it solved and the conclusion
-  that follows, and Week 4 prints how to read the table it just produced.
+  that follows, and Week 4 prints the bound it demonstrated together with what
+  its normalising column converges to.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
   hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
   and prints the measured counts as a table alongside a column normalised by the
   growth function under test; Week 3 keeps that layout and adds the exact closed
-  form as a column of its own; Week 4 keeps it too and adds the ratio to the
-  bound plus the brute-force cost it displaced. None of Weeks 2, 3 or 4 leaves
-  anything behind on disk when it runs.
-- Where a plots directory can be regenerated rather than hand-drawn, the script
-  that does it is committed beside the questions it serves — as in
-  [`WEEK 4/make_plots.py`](WEEK%204/make_plots.py), which derives every figure
-  from the programs' own printed output.
+  form as a column of its own; Week 4 keeps it too and reads the normalised
+  column as a converging one, printing `-` wherever the reference check it is
+  compared against was too expensive to run. None of Weeks 2, 3 and 4 leave
+  anything behind on disk when they run.
 - Where a program can check its own answer it does, and aborts on a mismatch, so
   a table that prints at all is a table from a correct run.
-- Programs take no input and seed no random number generator, so a fresh run of
-  any question reproduces its committed `sample.txt` exactly.
 
 ---
 
