@@ -1,0 +1,73 @@
+$ gcc -Wall -Wextra q4_heapsort_file.c -o q4 -lm
+$ ./q4
+
+worked example, n = 10
+  input      : 23 4 91 15 8 42 16 77 30 1
+  after build: 91 77 42 30 8 23 16 15 4 1
+               91 at the root, every parent >= its children
+  sorted     : 1 4 8 15 16 23 30 42 77 91
+
+==============================================
+ HEAPSORT ON N RANDOM ELEMENTS FROM A FILE
+==============================================
+-----------------------------------------------------------------------
+       n  runs      build  bld/n      extract ext/nlgn tot/nlgn  vs qs
+-----------------------------------------------------------------------
+      10  4000         12  1.200           29    0.873    1.234   1.68
+     100  4000        179  1.790          858    1.291    1.561   1.60
+    1000  1000       1855  1.855        15001    1.505    1.691   1.53
+   10000   200      18793  1.879       216606    1.630    1.772   1.51
+  100000    40     188345  1.883      2831579    1.705    1.818   1.50
+ 1000000     6    1881511  1.882     34911584    1.752    1.846   1.48
+vs qs is heapsort's comparisons over quicksort's exact average
+2(n+1)H(n) - 4n.  At n = 1000000 the file held 10482480 bytes in, 10482480 out
+both files removed on the way out; pass --keep to look
+
+building the heap: bottom-up against successive insertion
+--------------------------------------------------------------
+       n     bu/n  insRnd/n   insAsc/n insAsc/nlgn
+--------------------------------------------------------------
+      10    1.200     1.200      1.900       0.572
+     100    1.790     2.030      4.800       0.722
+    1000    1.855     2.204      7.987       0.801
+   10000    1.879     2.273     11.363       0.855
+  100000    1.883     2.290     14.689       0.884
+ 1000000    1.882     2.280     17.951       0.901
+bu is Floyd's build on the same random file, insRnd the sift-up
+build on it, insAsc the sift-up build on 0..n-1 ascending.
+
+input shape, n = 100000, total comparisons
+---------------------------------------------
+pattern                cmps    /nlg2n /random
+---------------------------------------------
+random              3019660     1.818   1.000
+sorted              3112517     1.874   1.031
+reversed            2926640     1.762   0.969
+all equal            299994     0.181   0.099
+ten values          2764808     1.665   0.916
+organ pipe          3053431     1.838   1.011
+
+build: a node at height h costs at most 2h and there are at most
+     n/2^(h+1) of them, and sum(2h/2^(h+1)) = 2, so the build stays
+     under 2n comparisons whatever the input.  bld/n reads 1.882 on
+     the random file at n = 1000000, and the ascending list -- where
+     every node does sift its full height -- reads 1.999974, so the
+     bound is tight and the build is Theta(n), not n log n.
+insert: the sift-up build is Omega(n log n) instead.  Half the
+     indices lie in the bottom level, so an ascending list, where
+     every new element climbs to the root, costs at least
+     (n/2)(log2 n - 1); measured 17951445 against 1999974 for bottom-up on
+     the same list, a factor of 9.0 at n = 1000000 and growing with
+     log n.  On random input it is linear too (insRnd/n ~ 2.28), so
+     the ascending column is where the two methods part.
+extract: n-1 sift-downs of the full height, 2 log2 i each, giving
+     2n log2 n; ext/nlgn reads 1.752 and tot/nlgn 1.846.
+bound: the dearest of the six shapes costs 1.874 n log2 n, only
+     1.03 times the random figure, and the cheapest 0.181 -- that
+     one is the constant list, where every sift-down stops at the
+     first level and the sort is linear.  No shape costs materially
+     more than random, which is the difference from quicksort: the
+     same six shapes took its textbook form to n(n-1)/2.
+     Heapsort pays 1.48 times quicksort's average comparisons for
+     that guarantee, sorts in place, and is not stable.
+

@@ -1,0 +1,83 @@
+$ gcc -Wall -Wextra q2_kth_smallest_without_sorting.c -o q2 -lm
+$ ./q2
+
+worked example, n = 10
+  input : 23 4 91 15 8 42 16 77 30 1
+  sorted: 1 4 8 15 16 23 30 42 77 91   (for reference only)
+  k =  1 ->  1   the minimum
+  after : 1 4 8 15 42 16 77 30 91 23
+  k =  3 ->  8
+  after : 1 4 8 15 42 16 30 23 77 91
+  k =  5 -> 16   the lower median
+  after : 1 4 15 8 16 42 77 30 91 23
+  k = 10 -> 91   the maximum
+  after : 23 4 15 8 42 16 77 30 1 91
+
+cross-check: 3720 (n,k) pairs with repeated keys, n = 1..30 and
+every rank 1..n, quickselect and heap and sort all agree
+
+=================================================
+ THE K'TH SMALLEST WITHOUT SORTING
+=================================================
+cost against the rank, n = 20001, mean of 400 runs (40 for the heap)
+-------------------------------------------------------------------
+     k    k/n    selCmps  sel/n  pred/n obs/pred   heapCmps  heap/n
+-------------------------------------------------------------------
+     1  0.000      40020  2.001   2.000    1.000      20000   1.000
+     2  0.000      38794  1.940   2.002    0.969      20018   1.001
+     5  0.000      39750  1.987   2.005    0.991      20131   1.007
+    20  0.001      39816  1.991   2.016    0.988      20874   1.044
+   100  0.005      41175  2.059   2.063    0.998      25711   1.285
+   500  0.025      44585  2.229   2.234    0.998      48147   2.407
+  2000  0.100      52231  2.611   2.650    0.985     109310   5.465
+  5000  0.250      61681  3.084   3.125    0.987     174932   8.746
+  8000  0.400      68069  3.403   3.346    1.017     195336   9.766
+ 10001  0.500      67684  3.384   3.386    0.999     192993   9.649
+ 12000  0.600      66151  3.307   3.346    0.988     179538   8.976
+ 15000  0.750      62716  3.136   3.125    1.003     140145   7.007
+ 18000  0.900      54446  2.722   2.650    1.027      83936   4.197
+ 19900  0.995      40712  2.035   2.063    0.986      40107   2.005
+ 20001  1.000      40720  2.036   2.000    1.018      37604   1.880
+
+growth at a fixed rank fraction k = n/4
+------------------------------------------------------------------------------
+       n  runs        k     selCmps  sel/n     +-  pred/n    sortCmps sort/sel
+------------------------------------------------------------------------------
+      11  4000        3          23  2.123  0.012   3.172          27     1.16
+     101  4000       26         294  2.910  0.015   3.141         544     1.85
+    1001  2000      251        3082  3.079  0.022   3.126        8719     2.83
+   10001   800     2501       31292  3.129  0.033   3.125      120449     3.85
+  100001   200    25001      308278  3.083  0.068   3.125     1536205     4.98
+ 1000001    50   250001     2996124  2.996  0.122   3.125    18674405     6.23
++- is the standard deviation of the mean of sel/n over the runs.
+
+C(n,k) = 2( n + k ln(n/k) + (n-k) ln(n/(n-k)) ) is what obs/pred
+     tests, and it holds column by column: 2n at both ends, a peak
+     of 2(1+ln2)n ~ 3.386n at the median, symmetric in k <-> n+1-k,
+     and linear in n at any fixed fraction k/n.  It is an
+     asymptotic formula, so the small rows of the second table sit
+     below it -- 2.12 against 3.17 at n = 11, where a list has no
+     room for the logarithms to mean anything; from n = 1001 on it
+     is inside a few per cent.
+The bounded max-heap is the cheaper method at both ends and much
+     dearer in between: 1.000n against 2.001n at k = 1, 1.285n against
+     2.059n at k = 100, then 2.407n against 2.229n at k = 500 -- so the
+     curves cross between those two ranks, and at the median the
+     heap costs 2.9 times what quickselect does.  Its worst case
+     is n log2 k, but only about k ln(n/k) elements get past the
+     root test on a random list, so the cost runs nearer
+     1.88k + (n-k) + 2 k log2(k) ln(n/k) -- some 10% above what is
+     measured, since a sift-down from the root usually stops short
+     of the bottom.  Both ends of that estimate are exact: 20000
+     = n-1 comparisons at k = 1, a bare scan for the minimum, and
+     1.880n at k = n, where the heap is the whole list, nothing is
+     ever tested, and all that is left is Floyd's build.  So the
+     heap curve is not symmetric in k <-> n+1-k as quickselect's
+     is: it peaks near k = n/e ~ 7358 (9.766n at k = 8000, against
+     9.649n at the median) and then falls back as the build cost
+     takes over from the insertions.
+Sorting first costs Theta(n log n) and answers every rank at once;
+     selection answers one rank in Theta(n), which is why sort/sel
+     grows from 1.16 to 6.23 across the decades.  Asking for many
+     ranks at once is where sorting takes the lead back.
+

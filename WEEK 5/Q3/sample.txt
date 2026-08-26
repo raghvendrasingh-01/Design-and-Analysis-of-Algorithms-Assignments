@@ -1,0 +1,63 @@
+$ gcc -Wall -Wextra q3_quicksort_file.c -o q3 -lm
+$ ./q3
+
+===============================================
+ QUICKSORT ON N RANDOM ELEMENTS FROM A FILE
+===============================================
+random pivot, three-way partition, smaller side recursed first
+------------------------------------------------------------------------------
+       n  runs         cmps         pred obs/pred c/nlg2n  swp/n  depth  lg n
+------------------------------------------------------------------------------
+      10  4000           31           31    0.999   0.925   2.44      3   3.3
+     100  4000          714          714    1.000   1.075   6.48      6   6.6
+    1000  1000        11669        11652    1.001   1.171  11.00      8  10.0
+   10000   200       162110       162438    0.998   1.220  15.54     11  13.3
+  100000    40      2091423      2084720    1.003   1.259  20.25     13  16.6
+ 1000000     6     25224169     25452121    0.991   1.266  24.56     15  19.9
+pred = 2(n+1)H(n) - 4n + one comparison per partition call, the
+classical average plus what the three-way scan costs over a two-way
+one; c/nlg2n is the same figure against the leading term alone.
+the file round trip, per row: 10482423 bytes in and 10482423 out at n = 1000000
+the library qsort on that same read-back data made 18674766
+comparisons against this quicksort's 25224169 -- log2(n!) = 18488885 is
+the floor no comparison sort can beat, and the library one comes
+within 1.0% of it while quicksort's 2 ln 2 = 1.386 average is
+36% above it -- the price of sorting in place.
+both files removed on the way out; pass --keep to look
+
+pivot rule against input shape, n = 10000, comparisons
+--------------------------------------------------------------
+pattern        last elem     median-3    random 3w   spread
+--------------------------------------------------------------
+random            152538       150497       158357        1
+sorted          49995000       131343       171594      381
+reversed        49995000       242135       165773      302
+all equal       49995000     50024997        10000     5002
+ten values       5030355      5058384        32033      158
+organ pipe       6051676      5991315       148651       41
+spread is the dearest rule over the cheapest on that shape; the
+worst case n(n-1)/2 = 49995000 and the average 155772, so every cell
+is somewhere on that scale.  The deepest stack anywhere in the
+table was 13 frames against lg n = 13.3, quadratic cells included.
+
+T(n) = 2T(n/2) + n on an even split, T(n) = T(n-1) + n on the
+     worst one, so quicksort lies between Theta(n log n) and
+     Theta(n^2).  obs/pred stays between 0.991 and 1.003 of the
+     exact average over five decades, so the growth table is the
+     first of those.  Note that c/nlg2n reads 1.27 at n = 1000000,
+     not 1.386: the -4n term is still worth 0.20 of it there, and
+     only vanishes as n -> infinity.
+The last-element pivot needs 49995000 comparisons on already sorted
+     input, 328 times what it needs on random input, because the
+     partition splits off one element at a time.  At n = 1000000
+     that would be 5x10^11 comparisons, hours instead of a second.
+Median-of-three repairs sorted and reversed and organ-pipe input
+     but not equal keys (50024997 comparisons, past n(n-1)/2 because
+     the rule itself pays three per call), because a two-way
+     partition has nowhere to put a run of equal elements.  The
+     three-way partition needs 10000 -- one pass, no recursion --
+     and on ten distinct values 32033 against 5030355.
+Recursing on the smaller side keeps the stack at log2 n frames
+     even where the comparison count is quadratic, which is why
+     the quadratic cells above finished at all.
+

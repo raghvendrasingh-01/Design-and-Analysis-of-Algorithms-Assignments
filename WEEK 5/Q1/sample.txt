@@ -1,0 +1,61 @@
+$ gcc -Wall -Wextra q1_median_without_sorting.c -o q1 -lm
+$ ./q1
+
+worked example, odd n = 9
+  input   : 7 12 3 9 21 5 18 1 14
+  sorted  : 1 3 5 7 9 12 14 18 21   (for reference only)
+  median  : 9.0
+  after   : 1 3 5 7 9 12 18 14 21
+            only rank 4 is in place; the rest is still unsorted
+
+worked example, even n = 6
+  input   : 4 8 15 16 23 42
+  median  : 15.5   = (15 + 16) / 2, both middles from one pass
+
+cross-check: 1600 duplicate-heavy instances at n = 1..40, all three agree
+
+duplicate keys, n = 10000, selecting rank 5000
+  keys           two-way cmps   three-way cmps      ratio
+  all distinct          61949            28375       2.18
+  all equal          37502499            10000    3750.25
+
+=========================================================
+ THE MEDIAN WITHOUT SORTING: SELECTION IN LINEAR TIME
+=========================================================
+--------------------------------------------------------------------------
+       n  runs    selCmps  sel/n     +-  mom/n   sortCmps sort/sel  moved%
+--------------------------------------------------------------------------
+      11  4000         26  2.328  0.012  3.437         29     1.13  38.505
+     101  4000        317  3.138  0.015  6.037        547     1.73  85.079
+    1001  2000       3409  3.405  0.023  7.389       8695     2.55  97.572
+   10001   800      33851  3.385  0.033  7.983     120404     3.56  99.668
+  100001   200     346403  3.464  0.068  8.289    1536128     4.43  99.956
+ 1000001    50    3631657  3.632  0.131  8.404   18675343     5.14  99.995
++- is the standard deviation of the mean of sel/n over the runs;
+one run has a spread of about 1.05n, so it shrinks as 1/sqrt(runs).
+
+even n = 100000, mean of 200 runs: the upper middle costs
+     3.273n and the lower one a further n/2 - 1 = 0.49999n exactly,
+     the maximum of the block the partition has already isolated
+     below it -- 3.773n in all, and still only one selection.
+
+mom/n rises per decade by +2.60 +1.35 +0.59 +0.31 +0.11,
+     a step that shrinks toward zero; a hidden log2 n factor
+     would instead add a fixed 3.32 every decade.
+
+T(n) = T(n/2) + n on the average pivot  ->  E[C] = 2(1+ln2)n
+     ~ 3.386n, and sel/n stays inside a band around that value
+     across five decades instead of growing: the median costs
+     Theta(n), no order statistic other than rank n/2 is ever
+     computed, and moved% shows the list left unsorted.
+T(n) <= T(n/5) + T(7n/10) + cn  ->  Theta(n) worst case for the
+     median-of-medians pivot, at a constant a few times larger,
+     which is the price of never being unlucky.
+Sorting first would cost Theta(n log n), so sort/sel grows like
+     log2(n)/3.386: 1.13 at n = 11, 5.14 at n = 1000001, and the gap
+     widens by a further factor of log2(10) with every decade.
+The two-way partition is the trap: with a strict < it makes
+     3n^2/8 comparisons on equal keys (37502499 at n = 10000,
+     against 10000 for the three-way one), so duplicates alone
+     turn the linear algorithm quadratic.
+

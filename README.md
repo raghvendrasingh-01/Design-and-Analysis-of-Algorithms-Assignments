@@ -37,6 +37,13 @@ brute-force cross-check but drops the expectation of a flat column: its ratios
 climb, and each is printed beside the ceiling it climbs towards — `2 − 1/log₂ n`,
 `1/(k−1)!`, `1 − c/log₂ m` — because `O(n log n)` bounds a ratio rather than
 fixing it, so convergence, not flatness, is what the bound actually asks for.
+Week 5 goes back to exact closed forms — `2(1 + ln 2)n` for selection,
+`2(n+1)H(n) − 4n` for quicksort's average, `2n` for building a heap — and adds a
+second table beside the first: one that holds `n` fixed and varies the *shape* of
+the input instead. For selection and sorting the size is not what decides the
+complexity class; the pivot rule and the distribution of keys are, and a table of
+random inputs alone would quietly hide that a last-element pivot needs
+`n(n−1)/2` comparisons on a list that is already sorted.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -222,60 +229,97 @@ Design-and-Analysis-of-Algorithms-Assignments/
 │       └── plots/                              # one panel: the three curves coincide
 │           └── 1_comparisons_identical.png
 │
-└── WEEK 4/
-    ├── 2026_Week4_DAA_Lab_04.pdf               # question paper
+├── WEEK 4/
+│   ├── 2026_Week4_DAA_Lab_04.pdf               # question paper
+│   │
+│   ├── Q1/                                     # Sorting Pairs by Colour in Linear Time
+│   │   ├── README.md
+│   │   ├── q1_three_colour_stable_sort.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # the 3n touches, stability, 2 plots
+│   │       ├── 1_linearity.png
+│   │       └── 2_stability.png
+│   │
+│   ├── Q2/                                     # A Pair from Two Sets Summing to x
+│   │   ├── README.md
+│   │   ├── q2_pair_sum_two_sets.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # sort, search and walk, 2 plots
+│   │       ├── 1_growth.png
+│   │       └── 2_ratio.png
+│   │
+│   ├── Q3/                                     # Do k of n Integers Sum to T?
+│   │   ├── README.md
+│   │   ├── q3_k_sum_subset.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # the n^(k-1) log n bound, 3 plots
+│   │       ├── 1_probes.png
+│   │       ├── 2_ratio.png
+│   │       └── 3_saving.png
+│   │
+│   ├── Q4/                                     # Peak Simultaneous Attendance at the Party
+│   │   ├── README.md
+│   │   ├── q4_party_peak_occupancy.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # the half-open sweep, 3 plots
+│   │       ├── 1_growth.png
+│   │       ├── 2_ratio.png
+│   │       └── 3_worked_example.png
+│   │
+│   ├── Q5/                                     # Merging Overlapping Intervals
+│   │   ├── README.md
+│   │   ├── q5_merge_intervals.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # the n - 1 merge steps, 3 plots
+│   │       ├── 1_growth.png
+│   │       ├── 2_ratio_and_compression.png
+│   │       └── 3_worked_example.png
+│   │
+│   └── Q6/                                     # The Point Lying in the Most Intervals
+│       ├── README.md
+│       ├── q6_max_overlap_point.c
+│       ├── sample.txt
+│       └── plots/                              # the closed-interval sweep, 3 plots
+│           ├── 1_growth.png
+│           ├── 2_ratio.png
+│           └── 3_worked_example.png
+│
+└── WEEK 5/
+    ├── 2026_Week1_DAA_Lab_05.jpeg              # question paper (photographed)
     │
-    ├── Q1/                                     # Sorting Pairs by Colour in Linear Time
+    ├── Q1/                                     # The Median Without Sorting
     │   ├── README.md
-    │   ├── q1_three_colour_stable_sort.c
+    │   ├── q1_median_without_sorting.c
     │   ├── sample.txt
-    │   └── plots/                              # the 3n touches, stability, 2 plots
-    │       ├── 1_linearity.png
-    │       └── 2_stability.png
-    │
-    ├── Q2/                                     # A Pair from Two Sets Summing to x
-    │   ├── README.md
-    │   ├── q2_pair_sum_two_sets.c
-    │   ├── sample.txt
-    │   └── plots/                              # sort, search and walk, 2 plots
+    │   └── plots/                              # selection stays linear, 2 plots
     │       ├── 1_growth.png
     │       └── 2_ratio.png
     │
-    ├── Q3/                                     # Do k of n Integers Sum to T?
+    ├── Q2/                                     # The K'th Smallest Without Sorting
     │   ├── README.md
-    │   ├── q3_k_sum_subset.c
+    │   ├── q2_kth_smallest_without_sorting.c
     │   ├── sample.txt
-    │   └── plots/                              # the n^(k-1) log n bound, 3 plots
-    │       ├── 1_probes.png
-    │       ├── 2_ratio.png
-    │       └── 3_saving.png
+    │   └── plots/                              # cost against the rank, 2 plots
+    │       ├── 1_cost_vs_k.png
+    │       └── 2_growth.png
     │
-    ├── Q4/                                     # Peak Simultaneous Attendance at the Party
+    ├── Q3/                                     # Quicksort on N Elements in a File
     │   ├── README.md
-    │   ├── q4_party_peak_occupancy.c
+    │   ├── q3_quicksort_file.c
     │   ├── sample.txt
-    │   └── plots/                              # the half-open sweep, 3 plots
+    │   └── plots/                              # the exact average, six shapes, 2 plots
     │       ├── 1_growth.png
-    │       ├── 2_ratio.png
-    │       └── 3_worked_example.png
+    │       └── 2_pivot_rules.png
     │
-    ├── Q5/                                     # Merging Overlapping Intervals
+    ├── Q4/                                     # Heapsort on N Elements in a File
     │   ├── README.md
-    │   ├── q5_merge_intervals.c
+    │   ├── q4_heapsort_file.c
     │   ├── sample.txt
-    │   └── plots/                              # the n - 1 merge steps, 3 plots
-    │       ├── 1_growth.png
-    │       ├── 2_ratio_and_compression.png
-    │       └── 3_worked_example.png
+    │   └── plots/                              # Floyd's 2n build, the guarantee, 2 plots
+    │       ├── 1_build.png
+    │       └── 2_guarantee.png
     │
-    └── Q6/                                     # The Point Lying in the Most Intervals
-        ├── README.md
-        ├── q6_max_overlap_point.c
-        ├── sample.txt
-        └── plots/                              # the closed-interval sweep, 3 plots
-            ├── 1_growth.png
-            ├── 2_ratio.png
-            └── 3_worked_example.png
+    └── make_plots.py                           # redraws the eight figures above
 ```
 
 </details>
@@ -316,6 +360,7 @@ the intro animation and the idle drift (which is how the stills here were taken)
 | Lab 02 | Data structure trade-offs, divide and conquer, the master theorem | 04 Aug 2026 | 3 | [WEEK 2](WEEK%202) |
 | Lab 03 | Divide and conquer — search, matrix multiplication, loop invariants | 11 Aug 2026 | 6 | [WEEK 3](WEEK%203) |
 | Lab 04 | Applications of sorting — counting sort, sorted search, event sweeps | 18 Aug 2026 | 6 | [WEEK 4](WEEK%204) |
+| Lab 05 | Selection and sorting — quickselect, quicksort, heapsort | 25 Aug 2026 | 4 | [WEEK 5](WEEK%205) |
 
 Each session below links into the same scene, opened on that lab.
 
@@ -355,6 +400,16 @@ Each session below links into the same scene, opened on that lab.
   <img src="3d-preview/shot-cards-week4.png" alt="WEEK 4, Lab 04 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
 </a>
 
+### WEEK 5 — Lab 05
+
+> One order statistic without sorting anything, and then sorting properly: where
+> the constant in front of `n log n` comes from, and what a worst-case guarantee
+> costs when you insist on one.
+
+<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=5">
+  <img src="3d-preview/shot-cards-week5.png" alt="WEEK 5, Lab 05 — ring of 4 cards, each printing one question's title, cost and summary" width="100%">
+</a>
+
 ## Features
 
 - **Self-documenting programs.** The analysis travels with the code. Week 1 and
@@ -363,6 +418,11 @@ Each session below links into the same scene, opened on that lab.
   from it — `T(n) = 2T(n/2) + 2 → 3n/2 − 2`, and so on for each question. Week 4
   closes with the bound it has just demonstrated together with a reading of the
   column that demonstrates it, naming what that column converges to and why.
+  Week 5 prints both halves of the derivation: the recurrence *and* the closed
+  form it solves to, `T(n) = T(n/2) + n → 2(1 + ln 2)n ≈ 3.386n` for selection,
+  and where a sum is the honest derivation rather than a recurrence, the sum
+  itself — `Σ 2h·n/2^(h+1) = 2n` for building a heap — followed in each case by
+  which measured column the reader is being asked to check it against.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
   rather than assume it. Week 1 writes its measurements to CSV and commits the
   plot as SVG beside the source; Week 2 commits its plots as PNG and also prints
@@ -376,7 +436,15 @@ Each session below links into the same scene, opened on that lab.
   `n` searches, `1/(k−1)!` because only increasing tuples are enumerated,
   `1 − c/log₂ m` for a merge sort's linear correction term. A bound requires the
   ratio to stay bounded, not to stay constant, so the honest claim is
-  convergence.
+  convergence. Week 5 goes back to exact closed forms and keeps two normalising
+  columns side by side to show why that matters: `obs/pred` divides quicksort's
+  measured count by the exact average `2(n+1)H(n) − 4n` and stays within 1% over
+  five decades, while dividing the same count by the leading term `n log₂ n`
+  alone reads 1.27 rather than 1.386 — the gap is precisely the `−4n` that the
+  closed form keeps and the leading term throws away. Beside each growth table
+  sits a second one that fixes `n` and varies the *shape* of the input instead,
+  because for selection and sorting the pivot rule and the distribution of keys
+  decide the complexity class every bit as much as the size does.
 - **Answers checked before counts are trusted.** Every Week 3 program validates
   its result against an independent reference and calls `exit(1)` on any
   disagreement — binary and ternary search against a linear scan, the coin
@@ -391,7 +459,15 @@ Each session below links into the same scene, opened on that lab.
   of the reported pair — still run at every size. And Q1 asserts that the *wrong*
   algorithm fails: the linear three-way partition is run beside the counting sort
   and caught breaking within-colour order from `n = 100` upward, so the property
-  under test is shown to be discriminating rather than merely satisfied.
+  under test is shown to be discriminating rather than merely satisfied. Week 5
+  runs into the one case where the obvious reference is circular — verifying a
+  sort by sorting proves nothing — and replaces it with three cheap invariants
+  that together are enough: ascending order, the sum of all keys, and their XOR,
+  which catches the compensating errors a sum alone would miss, plus a count of
+  bytes written against bytes read back. Selection *can* afford references and
+  uses two, agreeing quickselect with a bounded heap and with a full sort over
+  thousands of duplicate-heavy instances; heapsort re-checks the heap property
+  across all `n` indices after every build.
 - **Verified samples.** Each question ships a `sample.txt` with input and output
   captured from an actual run, not written from memory.
 - **Hand-written algorithms.** Every algorithm under study is implemented from
@@ -400,15 +476,22 @@ Each session below links into the same scene, opened on that lab.
   matters: what is under study there is what sorting *buys*, so the sort is
   `qsort` and the `O(n log n)` worst case is inherited from the library's
   contract rather than proved — Q1, the one question whose subject is the sort
-  itself, is written out by hand.
-- **No external dependencies.** The C standard library only — nothing to install
-  beyond a compiler, and nothing to run after the program exits.
+  itself, is written out by hand. Week 5 calls a library sort exactly once, for
+  the same kind of reason: `qsort` runs beside the hand-written quicksort purely
+  as a measuring stick, and the number it yields is the point of running it —
+  18674766 comparisons against this quicksort's 25224169, with
+  `log₂(n!) = 18488885` the floor no comparison sort can beat.
+- **No external dependencies to build or run.** The C standard library only —
+  nothing to install beyond a compiler, and nothing left behind after the program
+  exits. Redrawing the committed figures is the single exception:
+  `WEEK 5/make_plots.py` needs Python 3 and matplotlib. Nothing needs it in order
+  to *read* the repository, since every figure is committed as an image.
 - **Consistent documentation.** Every question README covers the same ground:
   problem statement, approach or analysis, complexity, sample input and output,
   explanation, and files — plus committed artefacts or figures wherever a
   question ships generated data. Weeks 1 and 2 use explicit build/run and
-  complexity sections; Weeks 3 and 4 put the same information in a header table
-  and add the analysis needed to interpret their measured output.
+  complexity sections; Weeks 3, 4 and 5 put the same information in a header
+  table and add the analysis needed to interpret their measured output.
 
 ---
 
@@ -418,12 +501,15 @@ Each session below links into the same scene, opened on that lab.
 |------|---------|---------|
 | GCC | any C99/C11-capable release | Compilation |
 | C standard library | — | `stdio.h`, `stdlib.h`, `string.h`, `time.h`, `math.h`, `float.h` |
+| Python 3 + matplotlib | *optional* | Redrawing the Week 5 figures with `WEEK 5/make_plots.py`; not needed to build, run, or read anything |
 
-That is the whole list. The programs have no external dependencies — all four
-weeks commit their plots as images, and Weeks 2, 3 and 4 additionally print their
-measurements as tables, so reading the repository requires nothing but a browser
-and running it requires nothing but GCC. Questions that pull in `math.h` are
-linked with `-lm`; each question's README carries its exact build line.
+That is the whole list, and the one optional row is optional in the strict
+sense: every figure in the repository is committed as an image, so the Python is
+needed only to redraw one. The programs themselves have no external dependencies
+— all five weeks commit their plots, and Weeks 2 through 5 additionally print
+their measurements as tables, so reading the repository requires nothing but a
+browser and running it requires nothing but GCC. Questions that pull in `math.h`
+are linked with `-lm`; each question's README carries its exact build line.
 
 Installing GCC, if it is not already present:
 
@@ -435,7 +521,7 @@ brew install gcc                                         # macOS
 On **Windows**, use MinGW-w64 and append `.exe` to the output name.
 
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
-charts using block characters. The Week 2, Week 3 and Week 4 programs print plain
+charts using block characters. The Week 2 through Week 5 programs print plain
 ASCII-only tables, so they render anywhere.
 
 ---
@@ -450,16 +536,23 @@ ASCII-only tables, so they render anywhere.
   problem, not just its number. One question, one source file.
 - Every program closes with its own analysis — Weeks 1 and 2 print the time and
   space complexity, Week 3 prints the recurrence it solved and the conclusion
-  that follows, and Week 4 prints the bound it demonstrated together with what
-  its normalising column converges to.
+  that follows, Week 4 prints the bound it demonstrated together with what its
+  normalising column converges to, and Week 5 prints the recurrence — or the sum,
+  where a sum is the honest derivation — beside the exact closed form its
+  measured column is divided by.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
   hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
   and prints the measured counts as a table alongside a column normalised by the
   growth function under test; Week 3 keeps that layout and adds the exact closed
   form as a column of its own; Week 4 keeps it too and reads the normalised
   column as a converging one, printing `-` wherever the reference check it is
-  compared against was too expensive to run. None of Weeks 2, 3 and 4 leave
-  anything behind on disk when they run.
+  compared against was too expensive to run; Week 5 keeps the closed-form column
+  and puts a second table beside each growth table, one that holds `n` fixed and
+  varies the shape of the input, so no claim rests on a single distribution.
+  None of Weeks 2, 3 and 4 leave anything behind on disk when they run. Week 5 Q3
+  and Q4 must write a file by construction — the question itself asks for `n`
+  elements stored in a file — so they delete both the generated and the sorted
+  file on the way out unless `--keep` is passed.
 - Where a program can check its own answer it does, and aborts on a mismatch, so
   a table that prints at all is a table from a correct run.
 
