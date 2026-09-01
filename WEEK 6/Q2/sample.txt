@@ -1,0 +1,28 @@
+$ gcc -std=c11 -Wall -Wextra -Wpedantic q2_matrix_operations.c -o q2 -lm
+$ ./q2
+A + B
+    5.00    3.00    4.00
+    1.00    4.00    4.00
+    6.00    6.00    2.00
+
+A x B
+    9.00   15.00   16.00
+    1.00    5.00   15.00
+   11.00   14.00    3.00
+
+Zero matrix? Yes
+A symmetric? Yes
+det(A) = 19.00
+
+Transpose of B
+    1.00    0.00    5.00
+    2.00    1.00    6.00
+    3.00    4.00    0.00
+
+Dominant eigenvalue of A: 4.879385
+Eigenvector: 0.844030 0.449099 0.293128
+
+Worst-case time complexities
+Addition, zero test, symmetry test, transpose: O(n^2)
+Naive multiplication and determinant: O(n^3)
+Power iteration: O(k*n^2), where k is the number of steps

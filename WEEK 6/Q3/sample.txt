@@ -1,0 +1,10 @@
+$ gcc -std=c11 -Wall -Wextra -Wpedantic q3_convolution_fft.c -o q3 -lm
+$ ./q3
+A: 1 2 3
+B: 4 5 6 7
+Convolution: 4 13 28 34 32 21
+Validation: FFT result matches direct convolution
+
+Complexity
+Direct convolution: O(m*n)
+FFT convolution: O(L log L), where L is the padded size

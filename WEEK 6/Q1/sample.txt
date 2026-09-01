@@ -1,0 +1,18 @@
+$ gcc -std=c11 -Wall -Wextra -Wpedantic q1_array_operations.c -o q1 -lm
+$ ./q1
+Input: 31 7 64 12 7 89 45 7 23 56
+Maximum: 89
+Largest and second largest: 89 64
+Mean: 34.10
+Median: 27.00
+Standard deviation: 27.08
+Mode: 7
+Without duplicates: 7 12 23 31 45 56 64 89
+Reversed: 56 23 7 45 89 7 12 64 7 31
+Partition around 31: 31 64 89 45 56 7 12 7 23 7
+Split index: 5 ([>= 31] followed by [< 31])
+
+Worst-case time complexities
+Maximum, two largest, mean, standard deviation: O(n)
+Median, mode, remove duplicates (bubble sort): O(n^2)
+Reverse and partition: O(n)

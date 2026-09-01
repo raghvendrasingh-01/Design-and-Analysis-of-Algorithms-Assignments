@@ -43,7 +43,11 @@ second table beside the first: one that holds `n` fixed and varies the *shape* o
 the input instead. For selection and sorting the size is not what decides the
 complexity class; the pivot rule and the distribution of keys are, and a table of
 random inputs alone would quietly hide that a last-element pivot needs
-`n(n−1)/2` comparisons on a list that is already sorted.
+`n(n−1)/2` comparisons on a list that is already sorted. Week 6 returns to
+compact classroom implementations: direct array scans, bubble sort where a
+sorted copy is useful, standard matrix loops and Gaussian elimination, a
+recursive FFT, and reversal-only sorting. Each program prints one worked example
+and a short complexity summary, with no plot directories.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -65,30 +69,12 @@ below.
 
 ## Repository Structure
 
-<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html">
-  <img src="3d-preview/shot-cards-all.png" alt="Rings of information cards stacked into a column, one ring per lab session" width="100%">
-</a>
-
-<p align="center">
-  <b><a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html">↻ Open the interactive map</a></b> &nbsp;·&nbsp;
-  drag to orbit &nbsp;·&nbsp; scroll to zoom &nbsp;·&nbsp;
-  click a card to open that question
-</p>
-
-Every lab question is printed on its own card — number, title, cost, summary
-and source file, legible straight from the scene rather than hidden behind a
-tooltip. One ring of cards per lab session, stacked into a column you spin.
-The header band is the question's complexity class, and the meter along the
-bottom counts that class out of six, so the cheap questions and the expensive
-ones sort themselves out at a glance.
-
-Hovering lifts a card out of the ring so you can read it, and clicking opens
-its folder on GitHub. The page carries a switcher for the other three styles,
-so one file gets you all four.
+Each lab session has its own folder. Every question folder contains the C source,
+its README, and a sample output; some earlier weeks also include generated plots
+or data files.
 
 <details>
-<summary><b>Every file, as a conventional tree</b> — the map above is the shape;
-this is the detail.</summary>
+<summary><b>Every file, as a conventional tree</b></summary>
 
 ```text
 Design-and-Analysis-of-Algorithms-Assignments/
@@ -284,69 +270,66 @@ Design-and-Analysis-of-Algorithms-Assignments/
 │           ├── 2_ratio.png
 │           └── 3_worked_example.png
 │
-└── WEEK 5/
-    ├── 2026_Week1_DAA_Lab_05.jpeg              # question paper (photographed)
+├── WEEK 5/
+│   ├── 2026_Week1_DAA_Lab_05.jpeg              # question paper (photographed)
+│   │
+│   ├── Q1/                                     # The Median Without Sorting
+│   │   ├── README.md
+│   │   ├── q1_median_without_sorting.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # selection stays linear, 2 plots
+│   │       ├── 1_growth.png
+│   │       └── 2_ratio.png
+│   │
+│   ├── Q2/                                     # The K'th Smallest Without Sorting
+│   │   ├── README.md
+│   │   ├── q2_kth_smallest_without_sorting.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # cost against the rank, 2 plots
+│   │       ├── 1_cost_vs_k.png
+│   │       └── 2_growth.png
+│   │
+│   ├── Q3/                                     # Quicksort on N Elements in a File
+│   │   ├── README.md
+│   │   ├── q3_quicksort_file.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # the exact average, six shapes, 2 plots
+│   │       ├── 1_growth.png
+│   │       └── 2_pivot_rules.png
+│   │
+│   ├── Q4/                                     # Heapsort on N Elements in a File
+│   │   ├── README.md
+│   │   ├── q4_heapsort_file.c
+│   │   ├── sample.txt
+│   │   └── plots/                              # Floyd's 2n build, the guarantee, 2 plots
+│   │       ├── 1_build.png
+│   │       └── 2_guarantee.png
+│   │
+│   └── make_plots.py                           # redraws the eight figures above
+│
+└── WEEK 6/
+    ├── 2026_Week6_DAA_Lab_06.pdf               # question paper
     │
-    ├── Q1/                                     # The Median Without Sorting
+    ├── Q1/                                     # Operations on an Unsorted Array
     │   ├── README.md
-    │   ├── q1_median_without_sorting.c
-    │   ├── sample.txt
-    │   └── plots/                              # selection stays linear, 2 plots
-    │       ├── 1_growth.png
-    │       └── 2_ratio.png
+    │   ├── q1_array_operations.c
+    │   └── sample.txt
     │
-    ├── Q2/                                     # The K'th Smallest Without Sorting
+    ├── Q2/                                     # Operations on Square Matrices
     │   ├── README.md
-    │   ├── q2_kth_smallest_without_sorting.c
-    │   ├── sample.txt
-    │   └── plots/                              # cost against the rank, 2 plots
-    │       ├── 1_cost_vs_k.png
-    │       └── 2_growth.png
+    │   ├── q2_matrix_operations.c
+    │   └── sample.txt
     │
-    ├── Q3/                                     # Quicksort on N Elements in a File
+    ├── Q3/                                     # Vector Convolution with the FFT
     │   ├── README.md
-    │   ├── q3_quicksort_file.c
-    │   ├── sample.txt
-    │   └── plots/                              # the exact average, six shapes, 2 plots
-    │       ├── 1_growth.png
-    │       └── 2_pivot_rules.png
+    │   ├── q3_convolution_fft.c
+    │   └── sample.txt
     │
-    ├── Q4/                                     # Heapsort on N Elements in a File
-    │   ├── README.md
-    │   ├── q4_heapsort_file.c
-    │   ├── sample.txt
-    │   └── plots/                              # Floyd's 2n build, the guarantee, 2 plots
-    │       ├── 1_build.png
-    │       └── 2_guarantee.png
-    │
-    └── make_plots.py                           # redraws the eight figures above
+    └── Q4/                                     # Sorting a Permutation by Reversals
+        ├── README.md
+        ├── q4_sort_by_reversals.c
+        └── sample.txt
 ```
-
-</details>
-
-<details>
-<summary><b>Running and publishing the map</b></summary>
-
-Each style is one self-contained HTML file next to a single vendored copy of
-three.js, so double-clicking is enough — no build step, no server, no network.
-
-| | |
-|---|---|
-| Locally | open `3d-preview/index.html` |
-| Published | enable **Settings → Pages → deploy from branch `main`, root**, then it serves at [`/3d-preview/index.html`](https://raghvendrasingh-01.github.io/Design-and-Analysis-of-Algorithms-Assignments/3d-preview/index.html) |
-| Without configuring Pages | [raw.githack.com](https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html) serves it straight from the branch |
-
-The hosted links above only answer once this directory has been pushed.
-
-| File | Style |
-|---|---|
-| `3d-preview/index.html` | Cards — the index itself, printed on cards you spin |
-| `3d-preview/districts.html` | Districts — one platform per lab session, one block per question |
-| `3d-preview/iso.html` | Isometric — an orthographic diorama; count the cubes to read the cost |
-| `3d-preview/skyline.html` | Skyline — the repository as a city at night |
-
-Query parameters: `?week=2` opens straight to one lab session, `?still=1` skips
-the intro animation and the idle drift (which is how the stills here were taken).
 
 </details>
 
@@ -361,44 +344,37 @@ the intro animation and the idle drift (which is how the stills here were taken)
 | Lab 03 | Divide and conquer — search, matrix multiplication, loop invariants | 11 Aug 2026 | 6 | [WEEK 3](WEEK%203) |
 | Lab 04 | Applications of sorting — counting sort, sorted search, event sweeps | 18 Aug 2026 | 6 | [WEEK 4](WEEK%204) |
 | Lab 05 | Selection and sorting — quickselect, quicksort, heapsort | 25 Aug 2026 | 4 | [WEEK 5](WEEK%205) |
+| Lab 06 | Array and matrix costs, FFT convolution, reversal sorting | 31 Aug 2026 | 4 | [WEEK 6](WEEK%206) |
 
-Each session below links into the same scene, opened on that lab.
+Each row below links directly to its lab folder and question documentation.
 
 ### WEEK 1 — Lab 01
 
 > Growth rates, randomised simulation, and counting the work an algorithm
 > actually does.
 
-<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=1">
-  <img src="3d-preview/shot-cards-week1.png" alt="WEEK 1, Lab 01 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
-</a>
+[Open the Week 1 folder](WEEK%201)
 
 ### WEEK 2 — Lab 02
 
 > Choosing a data structure by what it costs, and what changes — and what does not —
 > when you split a problem into more than two pieces.
 
-<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=2">
-  <img src="3d-preview/shot-cards-week2.png" alt="WEEK 2, Lab 02 — ring of 3 cards, each printing one question's title, cost and summary" width="100%">
-</a>
+[Open the Week 2 folder](WEEK%202)
 
 ### WEEK 3 — Lab 03
 
 > Splitting a problem and paying for the split: when a three-way division wins,
 > when it loses, and what structure in the input is worth.
 
-<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=3">
-  <img src="3d-preview/shot-cards-week3.png" alt="WEEK 3, Lab 03 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
-</a>
+[Open the Week 3 folder](WEEK%203)
 
 ### WEEK 4 — Lab 04
 
 > Sorting as the step that comes first: what it buys you — a lookup instead of a
 > scan, a sweep instead of every pair — and what it cannot buy.
 
-<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=4">
-  <img src="3d-preview/shot-cards-week4.png" alt="WEEK 4, Lab 04 — ring of 6 cards, each printing one question's title, cost and summary" width="100%">
-</a>
+[Open the Week 4 folder](WEEK%204)
 
 ### WEEK 5 — Lab 05
 
@@ -406,9 +382,17 @@ Each session below links into the same scene, opened on that lab.
 > the constant in front of `n log n` comes from, and what a worst-case guarantee
 > costs when you insist on one.
 
-<a href="https://raw.githack.com/raghvendrasingh-01/Design-and-Analysis-of-Algorithms-Assignments/main/3d-preview/index.html?week=5">
-  <img src="3d-preview/shot-cards-week5.png" alt="WEEK 5, Lab 05 — ring of 4 cards, each printing one question's title, cost and summary" width="100%">
-</a>
+[Open the Week 5 folder](WEEK%205)
+
+### WEEK 6 — Lab 06
+
+> Worst-case costs on arrays and matrices, FFT convolution, and sorting when the
+> permitted primitive is reversal rather than comparison or swap.
+
+[Q1 — Array operations](WEEK%206/Q1) ·
+[Q2 — Matrix operations](WEEK%206/Q2) ·
+[Q3 — FFT convolution](WEEK%206/Q3) ·
+[Q4 — Sorting by reversals](WEEK%206/Q4)
 
 ## Features
 
@@ -422,7 +406,9 @@ Each session below links into the same scene, opened on that lab.
   form it solves to, `T(n) = T(n/2) + n → 2(1 + ln 2)n ≈ 3.386n` for selection,
   and where a sum is the honest derivation rather than a recurrence, the sum
   itself — `Σ 2h·n/2^(h+1) = 2n` for building a heap — followed in each case by
-  which measured column the reader is being asked to check it against.
+  which measured column the reader is being asked to check it against. Week 6
+  uses a shorter lab style: the code demonstrates one readable example and then
+  prints the complexity of the loops or recurrence it just used.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
   rather than assume it. Week 1 writes its measurements to CSV and commits the
   plot as SVG beside the source; Week 2 commits its plots as PNG and also prints
@@ -467,7 +453,10 @@ Each session below links into the same scene, opened on that lab.
   bytes written against bytes read back. Selection *can* afford references and
   uses two, agreeing quickselect with a bounded heap and with a full sort over
   thousands of duplicate-heavy instances; heapsort re-checks the heap property
-  across all `n` indices after every build.
+  across all `n` indices after every build. Week 6 keeps its checks small and
+  visible: the array answers can be read from the example, FFT convolution is
+  compared with the direct formula, and both reversal methods must produce the
+  identity permutation.
 - **Verified samples.** Each question ships a `sample.txt` with input and output
   captured from an actual run, not written from memory.
 - **Hand-written algorithms.** Every algorithm under study is implemented from
@@ -490,8 +479,8 @@ Each session below links into the same scene, opened on that lab.
   problem statement, approach or analysis, complexity, sample input and output,
   explanation, and files — plus committed artefacts or figures wherever a
   question ships generated data. Weeks 1 and 2 use explicit build/run and
-  complexity sections; Weeks 3, 4 and 5 put the same information in a header
-  table and add the analysis needed to interpret their measured output.
+  complexity sections; Weeks 3 through 5 use detailed header tables and measured
+  analysis; Week 6 uses shorter classroom-style notes and complexity tables.
 
 ---
 
@@ -506,8 +495,8 @@ Each session below links into the same scene, opened on that lab.
 That is the whole list, and the one optional row is optional in the strict
 sense: every figure in the repository is committed as an image, so the Python is
 needed only to redraw one. The programs themselves have no external dependencies
-— all five weeks commit their plots, and Weeks 2 through 5 additionally print
-their measurements as tables, so reading the repository requires nothing but a
+— Weeks 1 through 5 commit their plots, while Week 6 intentionally uses console
+examples without plot folders. Reading the repository requires nothing but a
 browser and running it requires nothing but GCC. Questions that pull in `math.h`
 are linked with `-lm`; each question's README carries its exact build line.
 
@@ -521,8 +510,8 @@ brew install gcc                                         # macOS
 On **Windows**, use MinGW-w64 and append `.exe` to the output name.
 
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
-charts using block characters. The Week 2 through Week 5 programs print plain
-ASCII-only tables, so they render anywhere.
+charts using block characters. The Week 2 through Week 6 programs use plain
+ASCII output, so they render anywhere.
 
 ---
 
@@ -539,7 +528,8 @@ ASCII-only tables, so they render anywhere.
   that follows, Week 4 prints the bound it demonstrated together with what its
   normalising column converges to, and Week 5 prints the recurrence — or the sum,
   where a sum is the honest derivation — beside the exact closed form its
-  measured column is divided by.
+  measured column is divided by. Week 6 instead closes each small example with a
+  direct complexity summary suitable for a classroom lab submission.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
   hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
   and prints the measured counts as a table alongside a column normalised by the
@@ -548,8 +538,9 @@ ASCII-only tables, so they render anywhere.
   column as a converging one, printing `-` wherever the reference check it is
   compared against was too expensive to run; Week 5 keeps the closed-form column
   and puts a second table beside each growth table, one that holds `n` fixed and
-  varies the shape of the input, so no claim rests on a single distribution.
-  None of Weeks 2, 3 and 4 leave anything behind on disk when they run. Week 5 Q3
+  varies the shape of the input, so no claim rests on a single distribution;
+  Week 6 uses worked examples and complexity summaries and omits plots entirely.
+  None of Weeks 2, 3, 4 and 6 leave anything behind on disk when they run. Week 5 Q3
   and Q4 must write a file by construction — the question itself asks for `n`
   elements stored in a file — so they delete both the generated and the sorted
   file on the way out unless `--keep` is passed.

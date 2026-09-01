@@ -1,0 +1,16 @@
+$ gcc -std=c11 -Wall -Wextra -Wpedantic q4_sort_by_reversals.c -o q4
+$ ./q4
+Input: 1 4 3 2 5
+Breakpoint lower bound: 1 reversal(s)
+
+Part A result: 1 2 3 4 5
+Reversals: 1, cost: 3
+
+Part B result: 1 2 3 4 5
+Reversals: 3, cost: 6
+
+Validation: both methods sorted the permutation
+
+Complexity
+Part A: at most n-1 reversals, O(n^2) running time
+Part B: O(n log^2 n) total reversal cost
