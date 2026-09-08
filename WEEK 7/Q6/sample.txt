@@ -1,0 +1,5 @@
+Scientists: 6
+Largest number alive: 4
+First year of maximum: 1879
+Events are sorted by year; deaths are processed before births in a tie.
+Time: O(n log n), space: O(n).

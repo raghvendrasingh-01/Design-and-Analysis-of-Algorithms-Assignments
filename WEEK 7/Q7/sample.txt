@@ -1,0 +1,5 @@
+Dimensions: 30 x 35 x 15 x 5 x 10 x 20 x 25
+Minimum scalar multiplications: 15125
+Optimal parenthesization: ((A1 x (A2 x A3)) x ((A4 x A5) x A6))
+DP states: O(n^2), transitions per state: O(n).
+Time: O(n^3), space: O(n^2).

@@ -1,0 +1,16 @@
+Switches: 4
+Minimum moves: 10
+1111
+1101  (toggle switch 3 from the left)
+1100  (toggle switch 4 from the left)
+0100  (toggle switch 1 from the left)
+0101  (toggle switch 4 from the left)
+0111  (toggle switch 3 from the left)
+0110  (toggle switch 4 from the left)
+0010  (toggle switch 2 from the left)
+0011  (toggle switch 4 from the left)
+0001  (toggle switch 3 from the left)
+0000  (toggle switch 4 from the left)
+Every transition obeys the rules: yes
+Method: recursive iterative-deepening DFS (minimum-depth solution).
+Worst-case time: exponential; space: O(2^n).

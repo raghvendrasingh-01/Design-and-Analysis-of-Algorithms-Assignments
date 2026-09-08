@@ -1,0 +1,4 @@
+Eggs: 2, floors: 100
+Minimum guaranteed droppings: 14
+General DP recurrence: D(e,f)=1+min max(D(e-1,x-1),D(e,f-x)).
+Time: O(E F^2), space: O(E F)

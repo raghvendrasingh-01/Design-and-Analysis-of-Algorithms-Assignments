@@ -1,0 +1,5 @@
+Disks: 8
+Optimal split for 8 disks: 4
+Total moves: 33
+DP recurrence: T(n)=min(2T(n-k)+2^k-1), over 1<=k<=n.
+Time to print: O(T(n)); DP time: O(n^2); recursion space: O(n).

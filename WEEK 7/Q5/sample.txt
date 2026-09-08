@@ -1,0 +1,4 @@
+Hiding spots: 6
+Shortest guaranteed strategy (8 shots): 2 3 4 5 5 4 3 2
+The BFS state is the set of positions still possible after each shot.
+Time: O(n^2 2^n), space: O(2^n); the empty state proves a guarantee.

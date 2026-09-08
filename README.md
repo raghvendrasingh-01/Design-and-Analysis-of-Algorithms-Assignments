@@ -46,8 +46,11 @@ random inputs alone would quietly hide that a last-element pivot needs
 `n(n−1)/2` comparisons on a list that is already sorted. Week 6 returns to
 compact classroom implementations: direct array scans, bubble sort where a
 sorted copy is useful, standard matrix loops and Gaussian elimination, a
-recursive FFT, and reversal-only sorting. Each program prints one worked example
-and a short complexity summary, with no plot directories.
+recursive FFT, and reversal-only sorting. Week 7 applies geometric reasoning,
+dynamic programming, recursive search, event sweeps, and matrix-chain
+optimization to seven algorithmic puzzles. Each program prints one worked
+example and a short complexity summary, with no plot directories in Weeks 6 and
+7.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -307,7 +310,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
 │   │
 │   └── make_plots.py                           # redraws the eight figures above
 │
-└── WEEK 6/
+├── WEEK 6/
     ├── 2026_Week6_DAA_Lab_06.pdf               # question paper
     │
     ├── Q1/                                     # Operations on an Unsorted Array
@@ -329,6 +332,23 @@ Design-and-Analysis-of-Algorithms-Assignments/
         ├── README.md
         ├── q4_sort_by_reversals.c
         └── sample.txt
+
+└── WEEK 7/
+    ├── 2026_Week7_DAA_Lab_07.pdf               # question paper
+    ├── Q1/                                     # Invert the coin triangle
+    │   ├── README.md, q1_invert_coin_triangle.c, sample.txt
+    ├── Q2/                                     # Super egg testing
+    │   ├── README.md, q2_super_egg_testing.c, sample.txt
+    ├── Q3/                                     # Reve's four-peg puzzle
+    │   ├── README.md, q3_reves_puzzle.c, sample.txt
+    ├── Q4/                                     # Security switches, recursive DFS
+    │   ├── README.md, q4_security_switches.c, sample.txt
+    ├── Q5/                                     # Hitting a moving target
+    │   ├── README.md, q5_moving_target.c, sample.txt
+    ├── Q6/                                     # Scientists alive at once
+    │   ├── README.md, q6_scientists_alive.c, sample.txt
+    └── Q7/                                     # Matrix-chain multiplication
+        ├── README.md, q7_matrix_chain.c, sample.txt
 ```
 
 </details>
@@ -345,6 +365,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
 | Lab 04 | Applications of sorting — counting sort, sorted search, event sweeps | 18 Aug 2026 | 6 | [WEEK 4](WEEK%204) |
 | Lab 05 | Selection and sorting — quickselect, quicksort, heapsort | 25 Aug 2026 | 4 | [WEEK 5](WEEK%205) |
 | Lab 06 | Array and matrix costs, FFT convolution, reversal sorting | 31 Aug 2026 | 4 | [WEEK 6](WEEK%206) |
+| Lab 07 | Algorithmic puzzles, DP, recursive search, event sweeps, MCM | 08 Sep 2026 | 7 | [WEEK 7](WEEK%207) |
 
 Each row below links directly to its lab folder and question documentation.
 
@@ -394,6 +415,21 @@ Each row below links directly to its lab folder and question documentation.
 [Q3 — FFT convolution](WEEK%206/Q3) ·
 [Q4 — Sorting by reversals](WEEK%206/Q4)
 
+### WEEK 7 — Lab 07
+
+> Puzzle applications using geometric reasoning, dynamic programming, recursive
+> state search, event sweeps, and matrix-chain optimization. Every question
+> includes a compact C implementation, README derivation, and captured sample
+> output.
+
+[Q1 — Coin triangle](WEEK%207/Q1) ·
+[Q2 — Super egg testing](WEEK%207/Q2) ·
+[Q3 — Reve's puzzle](WEEK%207/Q3) ·
+[Q4 — Security switches](WEEK%207/Q4) ·
+[Q5 — Moving target](WEEK%207/Q5) ·
+[Q6 — Scientists alive](WEEK%207/Q6) ·
+[Q7 — Matrix chain](WEEK%207/Q7)
+
 ## Features
 
 - **Self-documenting programs.** The analysis travels with the code. Week 1 and
@@ -406,9 +442,10 @@ Each row below links directly to its lab folder and question documentation.
   form it solves to, `T(n) = T(n/2) + n → 2(1 + ln 2)n ≈ 3.386n` for selection,
   and where a sum is the honest derivation rather than a recurrence, the sum
   itself — `Σ 2h·n/2^(h+1) = 2n` for building a heap — followed in each case by
-  which measured column the reader is being asked to check it against. Week 6
-  uses a shorter lab style: the code demonstrates one readable example and then
-  prints the complexity of the loops or recurrence it just used.
+  which measured column the reader is being asked to check it against. Weeks 6
+  and 7 use a shorter classroom style: each code file demonstrates one readable
+  example and then prints the complexity of the loops, recurrence, or search it
+  just used.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
   rather than assume it. Week 1 writes its measurements to CSV and commits the
   plot as SVG beside the source; Week 2 commits its plots as PNG and also prints
@@ -456,7 +493,9 @@ Each row below links directly to its lab folder and question documentation.
   across all `n` indices after every build. Week 6 keeps its checks small and
   visible: the array answers can be read from the example, FFT convolution is
   compared with the direct formula, and both reversal methods must produce the
-  identity permutation.
+  identity permutation. Week 7 validates the coin-triangle overlap, the 33-move
+  Reve solution, every security-switch transition, and the matrix-chain cost
+  reconstruction.
 - **Verified samples.** Each question ships a `sample.txt` with input and output
   captured from an actual run, not written from memory.
 - **Hand-written algorithms.** Every algorithm under study is implemented from
@@ -480,7 +519,8 @@ Each row below links directly to its lab folder and question documentation.
   explanation, and files — plus committed artefacts or figures wherever a
   question ships generated data. Weeks 1 and 2 use explicit build/run and
   complexity sections; Weeks 3 through 5 use detailed header tables and measured
-  analysis; Week 6 uses shorter classroom-style notes and complexity tables.
+  analysis; Weeks 6 and 7 use shorter classroom-style notes and complexity
+  derivations.
 
 ---
 
@@ -495,8 +535,8 @@ Each row below links directly to its lab folder and question documentation.
 That is the whole list, and the one optional row is optional in the strict
 sense: every figure in the repository is committed as an image, so the Python is
 needed only to redraw one. The programs themselves have no external dependencies
-— Weeks 1 through 5 commit their plots, while Week 6 intentionally uses console
-examples without plot folders. Reading the repository requires nothing but a
+— Weeks 1 through 5 commit their plots, while Weeks 6 and 7 intentionally use
+  console examples without plot folders. Reading the repository requires nothing but a
 browser and running it requires nothing but GCC. Questions that pull in `math.h`
 are linked with `-lm`; each question's README carries its exact build line.
 
@@ -510,7 +550,7 @@ brew install gcc                                         # macOS
 On **Windows**, use MinGW-w64 and append `.exe` to the output name.
 
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
-charts using block characters. The Week 2 through Week 6 programs use plain
+charts using block characters. The Week 2 through Week 7 programs use plain
 ASCII output, so they render anywhere.
 
 ---
@@ -528,8 +568,8 @@ ASCII output, so they render anywhere.
   that follows, Week 4 prints the bound it demonstrated together with what its
   normalising column converges to, and Week 5 prints the recurrence — or the sum,
   where a sum is the honest derivation — beside the exact closed form its
-  measured column is divided by. Week 6 instead closes each small example with a
-  direct complexity summary suitable for a classroom lab submission.
+  measured column is divided by. Weeks 6 and 7 instead close each small example
+  with a direct complexity summary suitable for a classroom lab submission.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
   hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
   and prints the measured counts as a table alongside a column normalised by the
@@ -539,8 +579,9 @@ ASCII output, so they render anywhere.
   compared against was too expensive to run; Week 5 keeps the closed-form column
   and puts a second table beside each growth table, one that holds `n` fixed and
   varies the shape of the input, so no claim rests on a single distribution;
-  Week 6 uses worked examples and complexity summaries and omits plots entirely.
-  None of Weeks 2, 3, 4 and 6 leave anything behind on disk when they run. Week 5 Q3
+  Weeks 6 and 7 use worked examples and complexity summaries and omit plots
+  entirely. None of Weeks 2, 3, 4, 6 and 7 leave anything behind on disk when
+  they run. Week 5 Q3
   and Q4 must write a file by construction — the question itself asks for `n`
   elements stored in a file — so they delete both the generated and the sorted
   file on the way out unless `--keep` is passed.

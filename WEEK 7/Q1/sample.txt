@@ -1,0 +1,27 @@
+Triangle side: 5
+Legend: O = unchanged coin, X = coin position changed
+Optimal translation: (dx, dy) = (1, -2)
+
+Original positions on the common lattice:
+        -2 -1  0  1  2  3  4
+x= 0 |        X             
+x= 1 |        O  O          
+x= 2 |        O  O  O       
+x= 3 |        O  O  O  X    
+x= 4 |        X  O  O  X  X 
+x= 5 |                      
+Vacated positions (X): (0,0) (3,3) (4,0) (4,3) (4,4)
+
+Final inverted positions on the same lattice:
+        -2 -1  0  1  2  3  4
+x= 0 |                      
+x= 1 |  X  X  O  O  X       
+x= 2 |     X  O  O  O       
+x= 3 |        O  O  O       
+x= 4 |           O  O       
+x= 5 |              X       
+New positions (X): (1,-2) (1,-1) (2,-1) (1,2) (5,2)
+Minimum moves (formula): 5
+Minimum moves (lattice validation): 5
+Formula validated: yes
+For m=n-1=3q+r, moves = 3q(q+1)/2 + r(q+1).
