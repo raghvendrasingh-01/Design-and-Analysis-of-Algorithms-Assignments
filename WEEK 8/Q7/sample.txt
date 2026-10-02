@@ -1,0 +1,3 @@
+Enter rod length n (positive integer): Enter prices p1 through p8:
+Maximum revenue: 22
+Optimal piece lengths: 2 + 6 (sum = 8)

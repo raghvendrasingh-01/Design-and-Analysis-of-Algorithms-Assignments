@@ -1,0 +1,12 @@
+Enter number of sorted keys n (0 to 2000): Enter sorted distinct keys k1 through k3:
+Enter successful probabilities p1 through p3:
+Enter unsuccessful probabilities q0 through q3:
+Minimum expected search cost: 2.4000000000
+Optimal tree (dummy leaves are unsuccessful searches):
+root k3 = 20 (p = 0.050000)
+  left: root k1 = 10 (p = 0.150000)
+    left: dummy d0 (q = 0.050000)
+    right: root k2 = 12 (p = 0.100000)
+      left: dummy d1 (q = 0.100000)
+      right: dummy d2 (q = 0.050000)
+  right: dummy d3 (q = 0.500000)

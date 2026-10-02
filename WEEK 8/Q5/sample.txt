@@ -1,0 +1,4 @@
+Maximum Sum Increasing Subsequence
+Enter n followed by n positive integers:
+Maximum sum: 106
+MSIS: 1 2 3 100

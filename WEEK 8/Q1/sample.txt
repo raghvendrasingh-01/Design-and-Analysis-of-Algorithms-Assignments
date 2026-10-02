@@ -1,0 +1,4 @@
+Minimum Coin Change
+Enter the number of denominations, the denominations, and the target amount:
+Target amount: 6
+Minimum coins: 2

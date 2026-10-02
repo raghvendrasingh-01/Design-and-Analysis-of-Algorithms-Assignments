@@ -1,0 +1,10 @@
+Enter source string A: Enter target string B: Minimum edit distance: 3
+Traceback (in forward order):
+1. SUBSTITUTE 'k' -> 's' (source 1, target 1)
+2. MATCH 'i' (source 2 -> target 2)
+3. MATCH 't' (source 3 -> target 3)
+4. MATCH 't' (source 4 -> target 4)
+5. SUBSTITUTE 'e' -> 'i' (source 5, target 5)
+6. MATCH 'n' (source 6 -> target 6)
+7. INSERT 'g' at target position 7
+Transformed string: sitting

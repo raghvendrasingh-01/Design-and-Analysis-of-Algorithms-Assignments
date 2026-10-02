@@ -48,9 +48,11 @@ compact classroom implementations: direct array scans, bubble sort where a
 sorted copy is useful, standard matrix loops and Gaussian elimination, a
 recursive FFT, and reversal-only sorting. Week 7 applies geometric reasoning,
 dynamic programming, recursive search, event sweeps, and matrix-chain
-optimization to seven algorithmic puzzles. Each program prints one worked
-example and a short complexity summary, with no plot directories in Weeks 6 and
-7.
+optimization to seven algorithmic puzzles. Week 8 focuses on dynamic programming
+and trajectory analysis: coin change, sequence reconstruction, edit distance,
+rod cutting, optimal BSTs, and Collatz simulation. Each program prints one
+worked example and a short complexity summary, with no plot directories in
+Weeks 6–8.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -333,7 +335,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
         ├── q4_sort_by_reversals.c
         └── sample.txt
 
-└── WEEK 7/
+├── WEEK 7/
     ├── 2026_Week7_DAA_Lab_07.pdf               # question paper
     ├── Q1/                                     # Invert the coin triangle
     │   ├── README.md, q1_invert_coin_triangle.c, sample.txt
@@ -347,8 +349,29 @@ Design-and-Analysis-of-Algorithms-Assignments/
     │   ├── README.md, q5_moving_target.c, sample.txt
     ├── Q6/                                     # Scientists alive at once
     │   ├── README.md, q6_scientists_alive.c, sample.txt
-    └── Q7/                                     # Matrix-chain multiplication
-        ├── README.md, q7_matrix_chain.c, sample.txt
+    │   └── Q7/                                 # Matrix-chain multiplication
+    │       ├── README.md, q7_matrix_chain.c, sample.txt
+
+└── WEEK 8/
+    ├── 2026_Week8_DAA_Lab_08.pdf               # question paper
+    ├── Q1/                                     # Minimum coin change
+    │   ├── README.md, q1_minimum_coin_change.c, sample.txt
+    ├── Q2/                                     # Coin-change combinations
+    │   ├── README.md, q2_coin_change_ways.c, sample.txt
+    ├── Q3/                                     # Longest common subsequence
+    │   ├── README.md, q3_lcs.c, sample.txt
+    ├── Q4/                                     # Longest increasing subsequence
+    │   ├── README.md, q4_longest_increasing_subsequence.c, sample.txt
+    ├── Q5/                                     # Maximum-sum increasing subsequence
+    │   ├── README.md, q5_maximum_sum_increasing_subsequence.c, sample.txt
+    ├── Q6/                                     # Edit distance with traceback
+    │   ├── README.md, q6_edit_distance.c, sample.txt
+    ├── Q7/                                     # Rod cutting with reconstruction
+    │   ├── README.md, q7_rod_cutting.c, sample.txt
+    ├── Q8/                                     # Optimal binary search trees
+    │   ├── README.md, q8_optimal_bst.c, sample.txt
+    └── Q9/                                     # Collatz trajectory analysis
+        ├── README.md, q9_collatz_analysis.c, sample.txt
 ```
 
 </details>
@@ -366,6 +389,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
 | Lab 05 | Selection and sorting — quickselect, quicksort, heapsort | 25 Aug 2026 | 4 | [WEEK 5](WEEK%205) |
 | Lab 06 | Array and matrix costs, FFT convolution, reversal sorting | 31 Aug 2026 | 4 | [WEEK 6](WEEK%206) |
 | Lab 07 | Algorithmic puzzles, DP, recursive search, event sweeps, MCM | 08 Sep 2026 | 7 | [WEEK 7](WEEK%207) |
+| Lab 08 | Dynamic programming and Collatz trajectory analysis | 29 Sep 2026 | 9 | [WEEK 8](WEEK%208) |
 
 Each row below links directly to its lab folder and question documentation.
 
@@ -430,6 +454,22 @@ Each row below links directly to its lab folder and question documentation.
 [Q6 — Scientists alive](WEEK%207/Q6) ·
 [Q7 — Matrix chain](WEEK%207/Q7)
 
+### WEEK 8 — Lab 08
+
+> Dynamic-programming solutions with reconstruction for coin change, subsequences,
+> edit distance, rod cutting, and optimal BSTs, followed by overflow-safe Collatz
+> trajectory and interval analysis.
+
+[Q1 — Minimum coin change](WEEK%208/Q1) ·
+[Q2 — Coin-change combinations](WEEK%208/Q2) ·
+[Q3 — LCS](WEEK%208/Q3) ·
+[Q4 — LIS](WEEK%208/Q4) ·
+[Q5 — Maximum-sum increasing subsequence](WEEK%208/Q5) ·
+[Q6 — Edit distance](WEEK%208/Q6) ·
+[Q7 — Rod cutting](WEEK%208/Q7) ·
+[Q8 — Optimal BST](WEEK%208/Q8) ·
+[Q9 — Collatz analysis](WEEK%208/Q9)
+
 ## Features
 
 - **Self-documenting programs.** The analysis travels with the code. Week 1 and
@@ -443,7 +483,7 @@ Each row below links directly to its lab folder and question documentation.
   and where a sum is the honest derivation rather than a recurrence, the sum
   itself — `Σ 2h·n/2^(h+1) = 2n` for building a heap — followed in each case by
   which measured column the reader is being asked to check it against. Weeks 6
-  and 7 use a shorter classroom style: each code file demonstrates one readable
+   through 8 use a shorter classroom style: each code file demonstrates one readable
   example and then prints the complexity of the loops, recurrence, or search it
   just used.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
@@ -519,7 +559,7 @@ Each row below links directly to its lab folder and question documentation.
   explanation, and files — plus committed artefacts or figures wherever a
   question ships generated data. Weeks 1 and 2 use explicit build/run and
   complexity sections; Weeks 3 through 5 use detailed header tables and measured
-  analysis; Weeks 6 and 7 use shorter classroom-style notes and complexity
+  analysis; Weeks 6 through 8 use shorter classroom-style notes and complexity
   derivations.
 
 ---
@@ -535,7 +575,7 @@ Each row below links directly to its lab folder and question documentation.
 That is the whole list, and the one optional row is optional in the strict
 sense: every figure in the repository is committed as an image, so the Python is
 needed only to redraw one. The programs themselves have no external dependencies
-— Weeks 1 through 5 commit their plots, while Weeks 6 and 7 intentionally use
+— Weeks 1 through 5 commit their plots, while Weeks 6 through 8 intentionally use
   console examples without plot folders. Reading the repository requires nothing but a
 browser and running it requires nothing but GCC. Questions that pull in `math.h`
 are linked with `-lm`; each question's README carries its exact build line.
@@ -550,7 +590,7 @@ brew install gcc                                         # macOS
 On **Windows**, use MinGW-w64 and append `.exe` to the output name.
 
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
-charts using block characters. The Week 2 through Week 7 programs use plain
+charts using block characters. The Week 2 through Week 8 programs use plain
 ASCII output, so they render anywhere.
 
 ---
@@ -568,7 +608,7 @@ ASCII output, so they render anywhere.
   that follows, Week 4 prints the bound it demonstrated together with what its
   normalising column converges to, and Week 5 prints the recurrence — or the sum,
   where a sum is the honest derivation — beside the exact closed form its
-  measured column is divided by. Weeks 6 and 7 instead close each small example
+  measured column is divided by. Weeks 6 through 8 instead close each small example
   with a direct complexity summary suitable for a classroom lab submission.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
   hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
@@ -579,8 +619,8 @@ ASCII output, so they render anywhere.
   compared against was too expensive to run; Week 5 keeps the closed-form column
   and puts a second table beside each growth table, one that holds `n` fixed and
   varies the shape of the input, so no claim rests on a single distribution;
-  Weeks 6 and 7 use worked examples and complexity summaries and omit plots
-  entirely. None of Weeks 2, 3, 4, 6 and 7 leave anything behind on disk when
+  Weeks 6 through 8 use worked examples and complexity summaries and omit plots
+  entirely. None of Weeks 2, 3, 4, 6, 7 and 8 leave anything behind on disk when
   they run. Week 5 Q3
   and Q4 must write a file by construction — the question itself asks for `n`
   elements stored in a file — so they delete both the generated and the sorted

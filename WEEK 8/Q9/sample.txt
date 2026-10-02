@@ -1,0 +1,11 @@
+Enter starting value n (positive integer): Trajectory for 13 (reached 1):
+13 -> 40 -> 20 -> 10 -> 5 -> 16 -> 8 -> 4 -> 2 -> 1
+Stopping value: 1
+Number of steps recorded: 9
+Enter interval [a b] (positive integers, at most 1000000 starts): Interval analysis [10, 15]:
+Starts analysed: 6
+Reached 1: 6
+Overflow stops: 0
+Step-limit stops: 0
+Largest value: 160 (from start 15)
+Longest recorded trajectory: 17 steps (start 14)

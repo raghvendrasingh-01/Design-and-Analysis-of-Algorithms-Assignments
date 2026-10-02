@@ -1,0 +1,4 @@
+Longest Increasing Subsequence
+Enter n followed by n integers:
+LIS length: 5
+LIS: 10 22 33 50 60

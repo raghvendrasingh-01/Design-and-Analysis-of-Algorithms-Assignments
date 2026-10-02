@@ -1,0 +1,4 @@
+Longest Common Subsequence
+Enter the first sequence on one line and the second sequence on the next:
+LCS length: 4
+LCS: BCBA
