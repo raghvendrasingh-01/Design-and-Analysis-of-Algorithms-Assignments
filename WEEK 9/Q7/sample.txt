@@ -1,0 +1,2 @@
+Enter number of elements n: Enter a positive integer: Enter a positive integer: Enter a positive integer: Enter a positive integer: Transformed array: 2 2 3 2
+Minimum deviation: 1

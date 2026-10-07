@@ -1,0 +1,8 @@
+Minimum Cost to Connect Sticks
+Enter n followed by n non-negative stick lengths:
+Merge sequence:
+  3 + 5 = 8 (cost 8)
+  6 + 8 = 14 (cost 14)
+  8 + 12 = 20 (cost 20)
+  14 + 20 = 34 (cost 34)
+Minimum total cost: 76

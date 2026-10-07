@@ -1,0 +1,7 @@
+Enter number of meetings n: Enter start and end for meeting 1: Enter start and end for meeting 2: Enter start and end for meeting 3: Enter start and end for meeting 4: Minimum rooms required: 2
+Assignments (input order, room numbers start at 1):
+Meeting 1 -> room 1
+Meeting 2 -> room 2
+Meeting 3 -> room 2
+Meeting 4 -> room 2
+Validation: intervals sharing a room do not overlap (end == start is reusable).

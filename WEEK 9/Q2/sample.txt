@@ -1,0 +1,10 @@
+Huffman Coding
+Enter n, then n pairs of one-character symbol and positive frequency:
+Canonical codebook (length, then symbol order):
+  'a': frequency=45, length=1, code=0
+  'b': frequency=13, length=3, code=100
+  'c': frequency=12, length=3, code=101
+  'd': frequency=16, length=3, code=110
+  'e': frequency=9, length=4, code=1110
+  'f': frequency=5, length=4, code=1111
+Expected code length: 2.240000 bits/symbol

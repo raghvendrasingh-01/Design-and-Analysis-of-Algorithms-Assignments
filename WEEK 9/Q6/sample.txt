@@ -1,0 +1,2 @@
+Enter string S: Enter K (non-negative): Rearranged string: abcabc
+Verified: every equal-character pair is at least 3 position(s) apart.

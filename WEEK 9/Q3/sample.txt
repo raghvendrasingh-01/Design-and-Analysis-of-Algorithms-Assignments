@@ -1,0 +1,5 @@
+Minimum Refuelling Stops
+Enter target distance D, initial fuel F, station count, then distance fuel pairs:
+Target distance: 25
+Minimum refuelling stops: 3
+Fuel remaining at target: 3

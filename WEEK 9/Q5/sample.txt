@@ -1,0 +1,4 @@
+Candy Distribution
+Enter n followed by n child ratings:
+Candy vector: 2 1 2 1 3 2 1
+Minimum total candies: 12

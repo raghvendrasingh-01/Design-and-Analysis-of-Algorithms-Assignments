@@ -1,0 +1,5 @@
+Enter number of strings n: Enter string 1: Enter string 2: Enter string 3: Enter string 4: Greedy superstring: catgac
+Greedy length: 6
+Exact DP superstring: catgac
+Exact DP length: 6
+Greedy versus exact: optimal on this instance
