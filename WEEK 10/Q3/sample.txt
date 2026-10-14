@@ -1,0 +1,19 @@
+Maximum Weight Component with Size Constraints
+Enter number of vertices V, size threshold K, and number of edges E:
+Enter vertex weights w_1 through w_6:
+
+Initial state before adding edges (threshold K = 3):
+  Max component weight (size <= 3): 30 (Component root: 4, size: 1)
+
+Processing 5 edge additions sequentially (u v edge_weight):
+  Edge  1: (1, 2, wt=5) -> Max valid weight = 35 (Root 1, size 2)
+  Edge  2: (3, 4, wt=8) -> Max valid weight = 45 (Root 3, size 2)
+  Edge  3: (5, 6, wt=3) -> Max valid weight = 45 (Root 3, size 2)
+  Edge  4: (1, 3, wt=12) -> Max valid weight = 25 (Root 5, size 2)
+  Edge  5: (5, 1, wt=7) -> All components exceed size threshold K=3
+
+Complexity Analysis:
+  Time Complexity:  O(V + E * (alpha(V) + log V)) = O(V + E log V)
+                    - DSU operations with path compression & union-by-size: O(alpha(V))
+                    - Priority Queue (Max-Heap) with lazy deletion: O(log V) per merge
+  Space Complexity: O(V) for DSU parent, size, weight arrays, and lazy Max-Heap
