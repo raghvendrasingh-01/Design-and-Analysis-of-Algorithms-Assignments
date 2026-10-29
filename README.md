@@ -56,9 +56,13 @@ superstring experiments. Week 10 explores graph representations, connected
 components, and Disjoint Set Union (DSU) algorithms: online bipartiteness
 testing, dynamic grid islands, component weight maximization with cardinality
 ceilings, offline decremental connectivity via reverse-time steps, and
-lexicographically minimal permutations via swap components. Each program prints
+lexicographically minimal permutations via swap components. Week 11 focuses on
+advanced applications of Breadth-First-Search (BFS): 0-1 BFS on expanded parity state
+graphs, multi-source BFS for radius-constrained Voronoi cell partitioning with
+deterministic tie-breaking, and bidirectional BFS with on-the-fly candidate generation
+for word transformation sequences. Each program prints
 one worked example and a short complexity summary, with no plot directories in
-Weeks 6–10.
+Weeks 6–11.
 
 **Every question has its own README** with the problem statement, approach,
 complexity analysis, and worked sample. Start from the [Lab Index](#lab-index)
@@ -402,18 +406,27 @@ Design-and-Analysis-of-Algorithms-Assignments/
 │   └── Q10/                                    # Greedy superstring experiment
 │       ├── README.md, q10_greedy_superstring.c, sample.txt
 │
-└── WEEK 10/
-    ├── 2026_Week10_DAA_Lab_10.pdf              # question paper
-    ├── Q1/                                     # Online graph-bipartiteness testing
-    │   ├── README.md, q1_online_bipartite.c, sample.txt
-    ├── Q2/                                     # Dynamic connected components in a grid
-    │   ├── README.md, q2_dynamic_grid_components.c, sample.txt
-    ├── Q3/                                     # Maximum weight component with size constraints
-    │   ├── README.md, q3_max_weight_component_k.c, sample.txt
-    ├── Q4/                                     # Reverse time-step DSU application
-    │   ├── README.md, q4_reverse_delete_max_component.c, sample.txt
-    └── Q5/                                     # Lexicographically smallest swap permutation
-        ├── README.md, q5_lexicographically_smallest_swap_permutation.c, sample.txt
+├── WEEK 10/
+│   ├── 2026_Week10_DAA_Lab_10.pdf              # question paper
+│   ├── Q1/                                     # Online graph-bipartiteness testing
+│   │   ├── README.md, q1_online_bipartite.c, sample.txt
+│   ├── Q2/                                     # Dynamic connected components in a grid
+│   │   ├── README.md, q2_dynamic_grid_components.c, sample.txt
+│   ├── Q3/                                     # Maximum weight component with size constraints
+│   │   ├── README.md, q3_max_weight_component_k.c, sample.txt
+│   ├── Q4/                                     # Reverse time-step DSU application
+│   │   ├── README.md, q4_reverse_delete_max_component.c, sample.txt
+│   └── Q5/                                     # Lexicographically smallest swap permutation
+│       ├── README.md, q5_lexicographically_smallest_swap_permutation.c, sample.txt
+│
+└── WEEK 11/
+    ├── 2026_Week11_DAA_Lab_11.pdf              # question paper
+    ├── Q1/                                     # Parity-constrained shortest path via 0-1 BFS
+    │   ├── README.md, q1_parity_01_bfs.c, sample.txt
+    ├── Q2/                                     # Radius-constrained Voronoi partitioning via multi-source BFS
+    │   ├── README.md, q2_voronoi_partitioning.c, sample.txt
+    └── Q3/                                     # Word transformation sequence via bidirectional BFS
+        ├── README.md, q3_word_ladder_bibfs.c, sample.txt
 ```
 
 </details>
@@ -434,6 +447,7 @@ Design-and-Analysis-of-Algorithms-Assignments/
 | Lab 08 | Dynamic programming and Collatz trajectory analysis | 29 Sep 2026 | 9 | [WEEK 8](WEEK%208) |
 | Lab 09 | Greedy algorithms, heaps, scheduling, and approximation experiments | 06 Oct 2026 | 10 | [WEEK 9](WEEK%209) |
 | Lab 10 | Disjoint Set Union (DSU), graph representations, connected components | 13 Oct 2026 | 5 | [WEEK 10](WEEK%2010) |
+| Lab 11 | Applications of Breadth-First-Search (BFS) — 0-1 BFS, Voronoi, bidirectional BFS | 27 Oct 2026 | 3 | [WEEK 11](WEEK%2011) |
 
 Each row below links directly to its lab folder and question documentation.
 
@@ -544,6 +558,16 @@ Each row below links directly to its lab folder and question documentation.
 [Q4 — Reverse time deletion](WEEK%2010/Q4) ·
 [Q5 — Smallest swap permutation](WEEK%2010/Q5)
 
+### WEEK 11 — Lab 11
+
+> Advanced Breadth-First-Search (BFS) algorithmic design:
+> 0-1 BFS over parity-augmented state space graphs, multi-source BFS for radius-bounded Voronoi cell partitioning with deterministic tie-breaking,
+> and bidirectional BFS for optimal word ladder mutations with hash-backed candidate generation.
+
+[Q1 — Parity-constrained 0-1 BFS](WEEK%2011/Q1) ·
+[Q2 — Radius-constrained Voronoi partitioning](WEEK%2011/Q2) ·
+[Q3 — Bidirectional BFS word transformation](WEEK%2011/Q3)
+
 ## Features
 
 - **Self-documenting programs.** The analysis travels with the code. Week 1 and
@@ -557,7 +581,7 @@ Each row below links directly to its lab folder and question documentation.
   and where a sum is the honest derivation rather than a recurrence, the sum
   itself — `Σ 2h·n/2^(h+1) = 2n` for building a heap — followed in each case by
   which measured column the reader is being asked to check it against. Weeks 6
-  through 10 use a shorter classroom style: each code file demonstrates one readable
+  through 11 use a shorter classroom style: each code file demonstrates one readable
   example and then prints the complexity of the loops, recurrence, or search it
   just used.
 - **Empirical alongside asymptotic.** Programs that study growth measure it
@@ -633,7 +657,7 @@ Each row below links directly to its lab folder and question documentation.
   explanation, and files — plus committed artefacts or figures wherever a
   question ships generated data. Weeks 1 and 2 use explicit build/run and
   complexity sections; Weeks 3 through 5 use detailed header tables and measured
-  analysis; Weeks 6 through 10 use shorter classroom-style notes and complexity
+  analysis; Weeks 6 through 11 use shorter classroom-style notes and complexity
   derivations.
 
 ---
@@ -649,7 +673,7 @@ Each row below links directly to its lab folder and question documentation.
 That is the whole list, and the one optional row is optional in the strict
 sense: every figure in the repository is committed as an image, so the Python is
 needed only to redraw one. The programs themselves have no external dependencies
-— Weeks 1 through 5 commit their plots, while Weeks 6 through 10 intentionally use
+— Weeks 1 through 5 commit their plots, while Weeks 6 through 11 intentionally use
   console examples without plot folders. Reading the repository requires nothing but a
 browser and running it requires nothing but GCC. Questions that pull in `math.h`
 are linked with `-lm`; each question's README carries its exact build line.
@@ -664,7 +688,7 @@ brew install gcc                                         # macOS
 On **Windows**, use MinGW-w64 and append `.exe` to the output name.
 
 A terminal with UTF-8 support is recommended — Week 1 Q1 to Q4 draw their ASCII
-charts using block characters. The Week 2 through Week 10 programs use plain
+charts using block characters. The Week 2 through Week 11 programs use plain
 ASCII output, so they render anywhere.
 
 ---
@@ -682,7 +706,7 @@ ASCII output, so they render anywhere.
   that follows, Week 4 prints the bound it demonstrated together with what its
   normalising column converges to, and Week 5 prints the recurrence — or the sum,
   where a sum is the honest derivation — beside the exact closed form its
-  measured column is divided by. Weeks 6 through 10 instead close each small example
+  measured column is divided by. Weeks 6 through 11 instead close each small example
   with a direct complexity summary suitable for a classroom lab submission.
 - Growth data is shown, never asserted. Week 1 writes a CSV and commits a
   hand-written `.svg` of the same name; Week 2 commits its plots under `plots/`
@@ -693,8 +717,8 @@ ASCII output, so they render anywhere.
   compared against was too expensive to run; Week 5 keeps the closed-form column
   and puts a second table beside each growth table, one that holds `n` fixed and
   varies the shape of the input, so no claim rests on a single distribution;
-  Weeks 6 through 10 use worked examples and complexity summaries and omit plots
-  entirely. None of Weeks 2, 3, 4, 6, 7, 8, 9 and 10 leave anything behind on disk when
+  Weeks 6 through 11 use worked examples and complexity summaries and omit plots
+  entirely. None of Weeks 2, 3, 4, 6, 7, 8, 9, 10 and 11 leave anything behind on disk when
   they run. Week 5 Q3
   and Q4 must write a file by construction — the question itself asks for `n`
   elements stored in a file — so they delete both the generated and the sorted
